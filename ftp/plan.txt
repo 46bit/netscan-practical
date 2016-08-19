@@ -1,0 +1,11 @@
+FTP is a service that allows managing files on servers. It's a little older than HTTP.
+
+You send it some basic commands
+
+- Have people upload a file. Download a file. Download a file passively.
+- Then have them use FTP to download from a server they can't reach.
+- Then to port scan?
+
+- discovery: nmap -sV -sC 192.168.56.101
+
+- denial of service. bounce

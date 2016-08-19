@@ -1,0 +1,29 @@
+student opens an FTP connection and downloads a file
+student opens an FTP connection and downloads a file passively
+student opens an FTP connection and sends a file somewhere else
+student opens an FTP connection and finds a port doesn't exist
+
+This vulnerability allows you to discover services accessible by the FTP Server itself. It also allows you to send data to those services. An FTP Server accessible to the FTP Server but not yourself can be accessed by having the FTP Server send a file of commands to its command port 21.
+
+The original FTP specification allowed for data connections being sent anywhere. However as the Internet matured this became apparent as a bad idea.
+
+In 1995 attention was drawn to this because you could use it to get around U.S. export restrictions on cryptography.
+
+----
+
+Back in 1995, the U.S. restricted the export of software using cryptography. The U.S. produced a lot of software used worldwide, and still does. The aim was to force the rest of the world to use encryption that the U.S. government could crack. However online open source software might just restrict downloads to U.S. IP addresses. Much of this software was hosted on FTP servers.
+
+Attention was drawn to FTP Bounce because it would let a foreign server download IP-restricted software by using a U.S. server as an unwitting proxy.
+
+[DIAGRAM]
+
+More interestingly for network scanning, the FTP Server tells you over the command port whether it was able to establish a data connection or not. If the FTP Server is behind a firewall, this lets you port scan the internal network!
+
+[EXCERPT]
+
+FTP Bounce lets you send chosen TCP data to a specified IP Address and Port, and tells you whether a connection could be established. This lets you do lots of things useful for learning about someone's network:
+
+* Discover their internal servers.
+* Enumerate which services are running.
+* Interact with internal, private FTP servers.
+* Send commands to some shells and databases, but generally not read the output.
