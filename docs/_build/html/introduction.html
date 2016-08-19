@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. Introduction &mdash; dbinfer 0.1.0b documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0b',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="dbinfer 0.1.0b documentation" href="index.html" />
+    <link rel="next" title="2. Functions and Examples" href="examples.html" />
+    <link rel="prev" title="Cyber-Practicals: netscan" href="index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="2. Functions and Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Cyber-Practicals: netscan"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<span id="ref-introduction"></span><h1>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Computers connected to networks have to be defended. For home PCs they often refuse all incoming traffic that isn&#8217;t for a connection they opened. This is the networking equivalent of not opening the door for someone you didn&#8217;t invite around.</p>
+<p>For servers the situation is a little different. Your favourite website exists to serve anyone who happens to connect to it. The servers can&#8217;t ignore your HTTP requests. The server is probably in a datacentre building somewhere, with backup power supplies and really good quality internet, so the webmaster needs a way to connect to it.</p>
+<div class="section" id="ports">
+<h2>1.1. Ports<a class="headerlink" href="#ports" title="Permalink to this headline">¶</a></h2>
+<p>At one time computers ran a single program at a time. That program had complete access to everything included to the computer, including any links to other computers. Any data received from a network would be passed to that single program.</p>
+<p>Those days are long gone: modern computers are often running dozens of different programs that want internet access at the same time. This is called <em>multitasking</em>. Sharing one internet connection between them is a challenge: how do you decide which program should get which received data?</p>
+<p><strong>Port numbers</strong> are used to solve this problem. Each network packet includes a destination port number. A program that wants to communicate asks the Operating System if it can listen to a particular 16-bit numbered port. If no program is listening on that port, the Operating System allows it and starts forwarding packets with that port number to the program.</p>
+<p>This is remarkably useful. It also presents an issue when you&#8217;re trying to secure a computer system: how do you check if all the programs listening on the network are secure enough to be allowed to do so? From the attacker&#8217;s point of view the same checks can be used to identify potentially vulnerable services to attack.</p>
+</div>
+<div class="section" id="services">
+<h2>1.2. Services<a class="headerlink" href="#services" title="Permalink to this headline">¶</a></h2>
+<p>In the decades since multitasking arrived, engineers have tried to standardise how you do particular things across a network. There is massive technical complexity in how networks function, and without some standardisation it would impossible to keep the Internet in one piece.</p>
+<div class="section" id="example-opening-a-webpage">
+<h3>1.2.1. Example: opening a webpage<a class="headerlink" href="#example-opening-a-webpage" title="Permalink to this headline">¶</a></h3>
+<p>One example of this is opening <cite>http://www.york.ac.uk/</cite> in your browser.</p>
+<ul>
+<li><p class="first"><strong>DNS</strong>: Your Operating System uses the DNS protocol to map the domain name <cite>www.york.ac.uk</cite> into the IP Address <cite>144.32.128.115</cite>. Lower levels of the networking stack can use this IP Address to send packets to and from the York server.</p>
+</li>
+<li><p class="first"><strong>HTTP</strong>: Your web browser now asks port <cite>80</cite> on <cite>144.32.128.115</cite> for that webpage. The request is phrased according to the HTTP protocol, which looks like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>GET / HTTP/1.1
+Host: www.york.ac.uk
+[…]
+</pre></div>
+</div>
+<p>A webserver program on the computer at <cite>144.32.128.115</cite> is listening on port <cite>80</cite>. This is the default port the HTTP protocol specifies. It receives that message and replies according to the HTTP protocol.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>HTTP/1.1 200 OK
+Date: Wed, 10 Aug 2016 11:26:18 GMT
+[…]
+&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;University of York&lt;/title&gt;
+[…]
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Within a fraction of a second you&#8217;re looking at the University of York website, thanks to decades of engineers and protocol authors designing services that work well together.</p>
+<p>Here&#8217;s some common services we&#8217;ll see later:</p>
+<ul class="simple">
+<li><strong>Remote login</strong>: FTP (port 21), SSH (port 22), Telnet (port 23)
+These are protocols designed for remotely administering servers. Generally they&#8217;ll ask for a user+password combination for the server, or something to that effect like using a cryptographic key.</li>
+<li><strong>Web servers</strong>: HTTP (port 80), HTTPS (port 443)
+These are protocols for serving webpages.</li>
+<li><strong>DNS</strong> (port 53): used to resolve domain names like <cite>york.ac.uk</cite> or <cite>tumblr.com</cite> into a 32-bit or 128-bit value that network routers can use to route your packets.</li>
+<li><strong>NTP</strong> (port 123): used to keep your computer&#8217;s clock syncronised with online atomic clocks.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="network-scanning">
+<h2>1.3. Network Scanning<a class="headerlink" href="#network-scanning" title="Permalink to this headline">¶</a></h2>
+<p>You&#8217;re the administrator of your personal computer. You own it and you configure it however you like. But most people don&#8217;t know anything about networks or computer security. Their operating systems need to be able to keep themselves safe rather than relying on the user. So they use firewalls: these are designed to only forward packets to listening programs if those programs requested the packets. This is a basic way to make your computer harder to attack.</p>
+<p>But if you administer a server for your company or community, you probably want people to be able to get webpages or copy files to and from it. You can&#8217;t ignore requests people send. So a firewall that drops all incoming requests isn&#8217;t such a great idea.</p>
+<p><strong>You need to firewall the things you don&#8217;t want people connecting to (like a terrible chess program you wrote last week) and expose things that people need to use (like a webserver).</strong> How to go about this?</p>
+<p>### Task 1: Finding running services</p>
+<p>Open <strong>[46b.it](http://46b.it)</strong> in your browser. This connects to that server with the HTTP and HTTPS protocols. So those services are running.</p>
+<p>Now open a shell prompt. and try <cite>ssh 46b.it</cite>. You&#8217;ll find it asks you to accept a key fingerprint but then (provided my security settings are right) you get <cite>Permission denied (publickey).</cite> So the SSH protocol is running as well. This is a way to administer a server remotely.</p>
+<p>But are you going to try all 65,535 services by hand? Nope. That&#8217;s what programs are for! Let&#8217;s use one called <strong>nmap</strong>. Run <cite>nmap 46b.it</cite>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ nmap 46b.it
+Nmap scan report for 46b.it (104.236.192.168)
+PORT     STATE    SERVICE
+22/tcp   open     ssh           # ooh, SSH
+25/tcp   filtered smtp          # ever used `ping`?
+80/tcp   open     http          # ooh, HTTP
+443/tcp  open     https         # ooh, HTTPS
+[...]
+</pre></div>
+</div>
+<p>This gives a nice list of which ports seem to have a program listening to them. Finding out what ports are being listened upon is an essential step in securing a server. Checking for any vulnerable services is also a common first step in attacking a server.</p>
+<p><strong>Remember: running this against a server you don&#8217;t control or across a network you don&#8217;t control is not necessarily legal.</strong> Don&#8217;t do it.</p>
+<p>### Task 2: Examining running services</p>
+<p>A lot of the services we use have only a few widely-used implementations. Security problems in them are constantly being discovered and patched, and if you find a years-old version running you might be able to use a well-known attack against it.</p>
+<p>You might also find relatively unknown programs running, ones that have never even considered security. Case in point: embedded systems, which can range from tiny chips in adapters to huge routers. They tend to have management or debugging programs, which were hopefully disabled before getting sent to customers. In practice companies often neglect security, as they&#8217;re unlikely to pay the price down the line for it.</p>
+<p>Take another look at the <cite>nmap</cite> results for the virtual machine and see what you can find. Try running <cite>telnet IP_ADDRESS PORT</cite>. Can you find anything interesting? Look up shell commands for deleting files and try them. Look up shell commands for printing out files and try them.</p>
+<p>This example is artificial but you do find things almost this bad in the real-world. Even in real industrial facilities. Poor industrial security has been attacked in practice, to destroy Iranian centrifuges (Stuxnet) or a German blast furnace.</p>
+<p>## Network defence</p>
+<p>The basics are to find and plug holes <strong>before</strong> you deploy systems and <strong>before</strong> someone else uses the problem against you.</p>
+<p><strong>Programs and systems have security bugs</strong>. Every available service will be scanned and attacked by bots. So ideally we only make available services that <em>have</em> to be accessible and that are well-vetted.</p>
+<p>Keeping services to only be available within your network limits an attacker. They need some sort of foothold in your organisation to even start attacking the firewalled services. This could be a hacked printer, a malicious employee, or an infected PC. These are all quite plausible but you&#8217;ve constrained the opportunities for attack.</p>
+<p>### Hunt for problems before you deploy - and fix them!</p>
+<p><strong>Scan for problems yourself.</strong>
+Before you make something available to the internet, <cite>nmap</cite> it and check which services are listening. Check the critical ones are configured securely. Firewall noncritical ones to only be accessible to the necessary network users. Disable unnecessary ones.</p>
+<p>### Task 3: Disable insecure services</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="n">root</span><span class="nd">@IP_ADDRESS</span>
+<span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">disable</span>
+</pre></div>
+</div>
+<p>### Task 3: Setup <cite>iptables</cite>, a Linux Firewall</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">1. Introduction</a><ul>
+<li><a class="reference internal" href="#ports">1.1. Ports</a></li>
+<li><a class="reference internal" href="#services">1.2. Services</a><ul>
+<li><a class="reference internal" href="#example-opening-a-webpage">1.2.1. Example: opening a webpage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#network-scanning">1.3. Network Scanning</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Cyber-Practicals: netscan</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="examples.html"
+                        title="next chapter">2. Functions and Examples</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/introduction.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples.html" title="2. Functions and Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Cyber-Practicals: netscan"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Howard Chivers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

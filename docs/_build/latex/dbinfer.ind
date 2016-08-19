@@ -1,0 +1,24 @@
+\begin{theindex}
+
+  \item close() (dbinfer.DbInfer method), \hyperpage{10}
+
+  \indexspace
+
+  \item DbInfer (class in dbinfer), \hyperpage{9}
+  \item dbinfer (module), \hyperpage{9}
+
+  \indexspace
+
+  \item query() (dbinfer.DbInfer method), \hyperpage{10}
+
+  \indexspace
+
+  \item rebuild() (in module dbinfer), \hyperpage{9}
+
+  \indexspace
+
+  \item setPolicy() (dbinfer.DbInfer method), \hyperpage{10}
+  \item setUser() (dbinfer.DbInfer method), \hyperpage{9}
+  \item setVerbose() (dbinfer.DbInfer method), \hyperpage{10}
+
+\end{theindex}

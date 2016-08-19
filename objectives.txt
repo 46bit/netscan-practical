@@ -1,0 +1,17 @@
+Each network service is an opportunity for discovery, enumeration, denial of service and exploitation.
+* Discovery: find servers on the network.
+* Enumeration: list running services.
+* Denial of service: abuse services to saturate the network.
+* Exploitation: hack into services or phish users.
+
+Firewalls can be used for perimeter defence, but there are many different ways to punch through them.
+* Protocol bugs e.g. FTP Bounce.
+* DNS Rebinding.
+* Stealing a device connected to your VPN.
+* A malicious employee.
+* …
+
+In practice can limit some of these risks, but not all. Need defence in depth.
+* Every running service should be necessary, not have any known vulnerabilities, and be carefully configured.
+* Assume attackers will get on your internal network and plan for that.
+* Building your own network services is something to do very carefully.

@@ -1,0 +1,8 @@
+\indexentry{dbinfer (module)|hyperpage}{9}
+\indexentry{rebuild() (in module dbinfer)|hyperpage}{9}
+\indexentry{DbInfer (class in dbinfer)|hyperpage}{9}
+\indexentry{setUser() (dbinfer.DbInfer method)|hyperpage}{9}
+\indexentry{setPolicy() (dbinfer.DbInfer method)|hyperpage}{10}
+\indexentry{setVerbose() (dbinfer.DbInfer method)|hyperpage}{10}
+\indexentry{query() (dbinfer.DbInfer method)|hyperpage}{10}
+\indexentry{close() (dbinfer.DbInfer method)|hyperpage}{10}
