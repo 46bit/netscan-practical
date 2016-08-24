@@ -11,9 +11,7 @@ Contents:
     :maxdepth: 2
 
     introduction
-    examples
-    reference
-    install
+    exercise1
     licence
 
 Indices and tables

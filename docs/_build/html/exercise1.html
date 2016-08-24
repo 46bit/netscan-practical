@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2. Exercise 1: Port Scanning via FTP Bounce &mdash; dbinfer 0.1.0b documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0b',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="dbinfer 0.1.0b documentation" href="index.html" />
+    <link rel="next" title="3. Licence" href="licence.html" />
+    <link rel="prev" title="1. Introduction" href="introduction.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="licence.html" title="3. Licence"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="1. Introduction"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="exercise-1-port-scanning-via-ftp-bounce">
+<span id="ref-examples"></span><h1>2. Exercise 1: Port Scanning via FTP Bounce<a class="headerlink" href="#exercise-1-port-scanning-via-ftp-bounce" title="Permalink to this headline">¶</a></h1>
+<p>FTP uses a Command socket and a Data socket, two independent connections for one FTP &#8216;session.&#8217; To open an FTP Session, the FTP Client establishes a command connection by connecting to port 21 on the server. The
+FTP Server then replies with a &#8220;welcome&#8221; message - generally the name and version of the running FTP server.</p>
+<p>A lot of things about FTP seem unusual or bizarre now, but the FTP protocol predates HTTP (the protocol
+you use to load websites). It was standardised about as we use it here by 1985. As such we have decades
+of hindsight to judge it with. That it remains a common service reflects that it is &#8216;good enough&#8217; to keep
+using it rather than a more modern replacement.</p>
+<div class="section" id="authentication">
+<h2>2.1. Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>The FTP Client now sends a <code class="docutils literal"><span class="pre">USER</span> <span class="pre">username_here</span></code> message, to identify the user they wish to log in with.</li>
+<li>If the username exists, the FTP Server replies with a <code class="docutils literal"><span class="pre">331</span> <span class="pre">Password</span> <span class="pre">required</span> <span class="pre">for</span> <span class="pre">student</span></code> response - again on the Command connection.</li>
+<li>The FTP Client now sends a <code class="docutils literal"><span class="pre">PASS</span> <span class="pre">password_here</span></code> message, givign the user&#8217;s password.</li>
+<li>If the username and password check out, the FTP Server responds with <code class="docutils literal"><span class="pre">230</span> <span class="pre">User</span> <span class="pre">student</span> <span class="pre">logged</span> <span class="pre">in</span></code>.</li>
+</ol>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="86%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&nbsp;</th>
+<th class="head">Command Messages or (<em>activity in italics</em>)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Client:</td>
+<td>(<em>connects to port 21 on the server</em>)</td>
+</tr>
+<tr class="row-odd"><td>Server:</td>
+<td><code class="docutils literal"><span class="pre">220</span> <span class="pre">ProFTPD</span> <span class="pre">1.3.5b</span> <span class="pre">Server</span></code></td>
+</tr>
+<tr class="row-even"><td>Client:</td>
+<td><code class="docutils literal"><span class="pre">USER</span> <span class="pre">student</span></code></td>
+</tr>
+<tr class="row-odd"><td>Server:</td>
+<td><code class="docutils literal"><span class="pre">331</span> <span class="pre">Password</span> <span class="pre">required</span> <span class="pre">for</span> <span class="pre">student</span></code></td>
+</tr>
+<tr class="row-even"><td>Client:</td>
+<td><code class="docutils literal"><span class="pre">PASS</span> <span class="pre">golyeeHug6</span></code></td>
+</tr>
+<tr class="row-odd"><td>Server:</td>
+<td><code class="docutils literal"><span class="pre">230</span> <span class="pre">User</span> <span class="pre">student</span> <span class="pre">logged</span> <span class="pre">in</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="using-the-data-connection">
+<h2>2.2. Using the Data Connection<a class="headerlink" href="#using-the-data-connection" title="Permalink to this headline">¶</a></h2>
+<p>I mentioned that there are <em>two</em> types of connection in an FTP session. We&#8217;ve seen how the Command connection is used to pass commands and response messages back and forth, but no sign of the Data
+Connection. The Data Connection only comes in when performing commands that provide some data beyond just
+a status message. If uploading or downloading a file, the file contents go across a Data connection.</p>
+<p>I say <em>a</em> data connection, because each data connection only carries the data for one command and is then
+immediately closed. This is partly due to FTP&#8217;s age: modern protocols would tend to include the data in
+the command connection because it poses fewer problems.</p>
+<p>To run a command that needs a data connection, the client first sends a <code class="docutils literal"><span class="pre">PORT</span> <span class="pre">X,X,X,X,A,B</span></code> command. The
+<code class="docutils literal"><span class="pre">X,X,X,X</span></code> encodes an IPv4 Address where the dots are replaced by commas. The <code class="docutils literal"><span class="pre">A,B</span></code> represents the Port to
+connect to. Port numbers range from 1 to 65,535 (the range of a 16-bit unsigned integer) and thus the upper
+8 bits are encoded as <code class="docutils literal"><span class="pre">A</span></code> and the lower 8 as <cite>B</cite>. Thus the socket <code class="docutils literal"><span class="pre">192.168.1.1:21</span></code> would be encoded as
+<code class="docutils literal"><span class="pre">PORT</span> <span class="pre">192,168,1,1,0,21</span></code>.</p>
+<p>The server responds with a <cite>200 PORT command successful</cite> response, but in practice this merely means the
+server was able to parse the <cite>PORT</cite> command. The data connection is only opened when the server is to
+immediately send data.</p>
+<p>The client can now execute a command that outputs data, such as <code class="docutils literal"><span class="pre">LIST</span></code> which lists the current directory.
+The server will send a <code class="docutils literal"><span class="pre">150</span> <span class="pre">Opening</span> <span class="pre">ASCII</span> <span class="pre">mode</span> <span class="pre">data</span> <span class="pre">connection</span> <span class="pre">for</span> <span class="pre">file</span> <span class="pre">list</span></code> response to indicate the
+Data connection is being opened, and then the server will immediately send the data down the Data
+connection. Once all the data is sent the server will close the connection and send a final
+<code class="docutils literal"><span class="pre">226</span> <span class="pre">Transfer</span> <span class="pre">complete</span></code> response.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&nbsp;</th>
+<th class="head">Command Messages or (<em>activity in italics</em>)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Client:</td>
+<td>(<em>listens on a random port, say 11240</em>)</td>
+</tr>
+<tr class="row-odd"><td>Client:</td>
+<td><code class="docutils literal"><span class="pre">PORT</span> <span class="pre">192,168,56,1,43,232</span></code></td>
+</tr>
+<tr class="row-even"><td>Server:</td>
+<td>200 PORT command successful</td>
+</tr>
+<tr class="row-odd"><td>Client:</td>
+<td><code class="docutils literal"><span class="pre">LIST</span></code></td>
+</tr>
+<tr class="row-even"><td>Server:</td>
+<td>(<em>opens a TCP connection to 192.168.56.1:11240</em>)``</td>
+</tr>
+<tr class="row-odd"><td>Server:</td>
+<td><code class="docutils literal"><span class="pre">150</span> <span class="pre">Opening</span> <span class="pre">ASCII</span> <span class="pre">mode</span> <span class="pre">data</span> <span class="pre">connection</span> <span class="pre">for</span> <span class="pre">file</span> <span class="pre">list</span></code></td>
+</tr>
+<tr class="row-even"><td>Server:</td>
+<td>(<em>sends a listing of the current directory</em>)</td>
+</tr>
+<tr class="row-odd"><td>Client:</td>
+<td>(<em>receives a listing of the current directory</em>)</td>
+</tr>
+<tr class="row-even"><td>Server:</td>
+<td>(<em>closes the data connection</em>)</td>
+</tr>
+<tr class="row-odd"><td>Server:</td>
+<td><code class="docutils literal"><span class="pre">226</span> <span class="pre">Transfer</span> <span class="pre">complete</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="a-short-incomplete-but-useful-command-reference">
+<h2>2.3. A Short, Incomplete but Useful Command Reference<a class="headerlink" href="#a-short-incomplete-but-useful-command-reference" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="77%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">COMMAND</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">PORT</span> <span class="pre">w,x,y,z,p,q</span></code></td>
+<td>Set the IPv4 Address and Port for the next data connection.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">LIST</span></code></td>
+<td>Lists the contents of the current directory</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">PWD</span></code></td>
+<td>Print the current working directory</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">CWD</span> <span class="pre">new_path</span></code></td>
+<td>Change the current working directory</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">RETR</span> <span class="pre">filename</span></code></td>
+<td>Lists the contents of the current directory</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">DELE</span> <span class="pre">filename</span></code></td>
+<td>Lists the contents of the current directory</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">STOR</span> <span class="pre">filename</span></code></td>
+<td>Lists the contents of the current directory</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">QUIT</span></code></td>
+<td>Close the current FTP Session</td>
+</tr>
+</tbody>
+</table>
+<p>A completer listing is available <a class="reference external" href="https://en.wikipedia.org/wiki/List_of_FTP_commands">here</a> but I believe you&#8217;ll find it confusing, rather than useful, for the following tasks.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">2. Exercise 1: Port Scanning via FTP Bounce</a><ul>
+<li><a class="reference internal" href="#authentication">2.1. Authentication</a></li>
+<li><a class="reference internal" href="#using-the-data-connection">2.2. Using the Data Connection</a></li>
+<li><a class="reference internal" href="#a-short-incomplete-but-useful-command-reference">2.3. A Short, Incomplete but Useful Command Reference</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="introduction.html"
+                        title="previous chapter">1. Introduction</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="licence.html"
+                        title="next chapter">3. Licence</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/exercise1.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="licence.html" title="3. Licence"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="introduction.html" title="1. Introduction"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Howard Chivers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

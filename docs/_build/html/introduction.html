@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="dbinfer 0.1.0b documentation" href="index.html" />
-    <link rel="next" title="2. Functions and Examples" href="examples.html" />
+    <link rel="next" title="2. Exercise 1: Port Scanning via FTP Bounce" href="exercise1.html" />
     <link rel="prev" title="Cyber-Practicals: netscan" href="index.html" /> 
   </head>
   <body role="document">
@@ -35,10 +35,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="examples.html" title="2. Functions and Examples"
+          <a href="exercise1.html" title="2. Exercise 1: Port Scanning via FTP Bounce"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Cyber-Practicals: netscan"
@@ -54,8 +51,11 @@
             
   <div class="section" id="introduction">
 <span id="ref-introduction"></span><h1>1. Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p>Computers connected to networks have to be defended. For home PCs they often refuse all incoming traffic that isn&#8217;t for a connection they opened. This is the networking equivalent of not opening the door for someone you didn&#8217;t invite around.</p>
-<p>For servers the situation is a little different. Your favourite website exists to serve anyone who happens to connect to it. The servers can&#8217;t ignore your HTTP requests. The server is probably in a datacentre building somewhere, with backup power supplies and really good quality internet, so the webmaster needs a way to connect to it.</p>
+<p>This exercise is going to give a basic introduction to Network Security. You&#8217;ll build a port scanner that
+gets inside private networks using an FTP vulnerability, use the scanner to identify services running on a
+server, destroy servers running private shells and finally retrieve the contents of all private FTP servers.
+At each stage we&#8217;ll also look at the means and mindset to defend against these problems.</p>
+<p>To begin with here&#8217;s a <em>basic</em> refresher on TCP networking.</p>
 <div class="section" id="ports">
 <h2>1.1. Ports<a class="headerlink" href="#ports" title="Permalink to this headline">¶</a></h2>
 <p>At one time computers ran a single program at a time. That program had complete access to everything included to the computer, including any links to other computers. Any data received from a network would be passed to that single program.</p>
@@ -106,43 +106,14 @@ These are protocols for serving webpages.</li>
 </div>
 <div class="section" id="network-scanning">
 <h2>1.3. Network Scanning<a class="headerlink" href="#network-scanning" title="Permalink to this headline">¶</a></h2>
-<p>You&#8217;re the administrator of your personal computer. You own it and you configure it however you like. But most people don&#8217;t know anything about networks or computer security. Their operating systems need to be able to keep themselves safe rather than relying on the user. So they use firewalls: these are designed to only forward packets to listening programs if those programs requested the packets. This is a basic way to make your computer harder to attack.</p>
-<p>But if you administer a server for your company or community, you probably want people to be able to get webpages or copy files to and from it. You can&#8217;t ignore requests people send. So a firewall that drops all incoming requests isn&#8217;t such a great idea.</p>
-<p><strong>You need to firewall the things you don&#8217;t want people connecting to (like a terrible chess program you wrote last week) and expose things that people need to use (like a webserver).</strong> How to go about this?</p>
-<p>### Task 1: Finding running services</p>
-<p>Open <strong>[46b.it](http://46b.it)</strong> in your browser. This connects to that server with the HTTP and HTTPS protocols. So those services are running.</p>
-<p>Now open a shell prompt. and try <cite>ssh 46b.it</cite>. You&#8217;ll find it asks you to accept a key fingerprint but then (provided my security settings are right) you get <cite>Permission denied (publickey).</cite> So the SSH protocol is running as well. This is a way to administer a server remotely.</p>
-<p>But are you going to try all 65,535 services by hand? Nope. That&#8217;s what programs are for! Let&#8217;s use one called <strong>nmap</strong>. Run <cite>nmap 46b.it</cite>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ nmap 46b.it
-Nmap scan report for 46b.it (104.236.192.168)
-PORT     STATE    SERVICE
-22/tcp   open     ssh           # ooh, SSH
-25/tcp   filtered smtp          # ever used `ping`?
-80/tcp   open     http          # ooh, HTTP
-443/tcp  open     https         # ooh, HTTPS
-[...]
-</pre></div>
-</div>
-<p>This gives a nice list of which ports seem to have a program listening to them. Finding out what ports are being listened upon is an essential step in securing a server. Checking for any vulnerable services is also a common first step in attacking a server.</p>
-<p><strong>Remember: running this against a server you don&#8217;t control or across a network you don&#8217;t control is not necessarily legal.</strong> Don&#8217;t do it.</p>
-<p>### Task 2: Examining running services</p>
-<p>A lot of the services we use have only a few widely-used implementations. Security problems in them are constantly being discovered and patched, and if you find a years-old version running you might be able to use a well-known attack against it.</p>
-<p>You might also find relatively unknown programs running, ones that have never even considered security. Case in point: embedded systems, which can range from tiny chips in adapters to huge routers. They tend to have management or debugging programs, which were hopefully disabled before getting sent to customers. In practice companies often neglect security, as they&#8217;re unlikely to pay the price down the line for it.</p>
-<p>Take another look at the <cite>nmap</cite> results for the virtual machine and see what you can find. Try running <cite>telnet IP_ADDRESS PORT</cite>. Can you find anything interesting? Look up shell commands for deleting files and try them. Look up shell commands for printing out files and try them.</p>
-<p>This example is artificial but you do find things almost this bad in the real-world. Even in real industrial facilities. Poor industrial security has been attacked in practice, to destroy Iranian centrifuges (Stuxnet) or a German blast furnace.</p>
-<p>## Network defence</p>
-<p>The basics are to find and plug holes <strong>before</strong> you deploy systems and <strong>before</strong> someone else uses the problem against you.</p>
-<p><strong>Programs and systems have security bugs</strong>. Every available service will be scanned and attacked by bots. So ideally we only make available services that <em>have</em> to be accessible and that are well-vetted.</p>
-<p>Keeping services to only be available within your network limits an attacker. They need some sort of foothold in your organisation to even start attacking the firewalled services. This could be a hacked printer, a malicious employee, or an infected PC. These are all quite plausible but you&#8217;ve constrained the opportunities for attack.</p>
-<p>### Hunt for problems before you deploy - and fix them!</p>
-<p><strong>Scan for problems yourself.</strong>
-Before you make something available to the internet, <cite>nmap</cite> it and check which services are listening. Check the critical ones are configured securely. Firewall noncritical ones to only be accessible to the necessary network users. Disable unnecessary ones.</p>
-<p>### Task 3: Disable insecure services</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="n">root</span><span class="nd">@IP_ADDRESS</span>
-<span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">disable</span>
-</pre></div>
-</div>
-<p>### Task 3: Setup <cite>iptables</cite>, a Linux Firewall</p>
+<p>You&#8217;re the administrator of your personal computer. You own it and you configure it however you like. But
+most people know nothing about networks or computer security. Even a lot of programmers know very little
+about how networks work. As such your Operating System needs to keep your computer safe through secure
+default settings: running few or no services and having a firewall up.</p>
+<p>But this wouldn&#8217;t work so well for a server you administer. If you need an FTP service and a HTTP service,
+then you have to try and manage the risks. If it&#8217;s only for people inside your company you could restrict
+connections to the local network - but this can be worked around by an attacker, as we&#8217;ll explore later.</p>
+<p><strong>You need to firewall the things you don&#8217;t want people connecting to (like a terrible chess program you wrote last week) and expose things that people need to use (like a webserver).</strong></p>
 </div>
 </div>
 
@@ -169,8 +140,8 @@ Before you make something available to the internet, <cite>nmap</cite> it and ch
   <p class="topless"><a href="index.html"
                         title="previous chapter">Cyber-Practicals: netscan</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="examples.html"
-                        title="next chapter">2. Functions and Examples</a></p>
+  <p class="topless"><a href="exercise1.html"
+                        title="next chapter">2. Exercise 1: Port Scanning via FTP Bounce</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -199,10 +170,7 @@ Before you make something available to the internet, <cite>nmap</cite> it and ch
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="examples.html" title="2. Functions and Examples"
+          <a href="exercise1.html" title="2. Exercise 1: Port Scanning via FTP Bounce"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Cyber-Practicals: netscan"
