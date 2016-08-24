@@ -1,4 +1,4 @@
-import os, sys, socket, time, collections
+import os, sys, socket, time, collections, re
 from socket import _GLOBAL_DEFAULT_TIMEOUT
 
 __all__ = ["FTP"]
@@ -100,27 +100,53 @@ class FTP:
     self.data_sock.listen(1)
     return self.data_address
 
+  def send_data(self, data):
+    conn, addr = self.data_sock.accept()
+
+    lines = re.split("[\n\r]", data)
+    if len(lines[-1]) == 0:
+      lines = lines[:-1]
+
+    if self.debugging:
+      print("[SENT DATA BEGINS]")
+
+    for line in lines:
+      line = line + CRLF
+      if self.debugging:
+        sys.stdout.write(line)
+      conn.sendall(line.encode(self.encoding))
+
+    if self.debugging:
+      sys.stdout.flush()
+      print("[SENT DATA ENDS]")
+
+    conn.shutdown(1)
+    conn.close()
+
   def recv_data(self):
     if self.data_address is None:
       raise Error("No data address set. Are you trying to receive data from a foreign data connection?")
     conn, addr = self.data_sock.accept()
 
-    data = []
+    data = ""
     while True:
         data_segment = conn.recv(8192)
         if not data_segment: break
-        data.append(data_segment)
-    #conn.shutdown(1)
-    conn.close()
-    data = ''.join(data)
+        data += str(data_segment, encoding=self.encoding)
+    data = data.replace(CRLF, "\n")
 
     if self.debugging:
-      sys.stdout.write("[DATA FOLLOWS]\n%s" % data)
-      sys.stdout.flush()
+      print("[RECEIVED DATA BEGINS]\n%s[RECEIVED DATA ENDS]" % data)
+
+    conn.shutdown(1)
+    conn.close()
+
     return data
 
   def close(self):
     self.send_command("QUIT")
+    if self.debugging:
+      print("")
 
     data_sock = self.data_sock
     self.data_sock = None
