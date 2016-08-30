@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="dbinfer 0.1.0b documentation" href="index.html" />
-    <link rel="next" title="3. Introduction to the FTP Protocol" href="ftp-reference.html" />
+    <link rel="next" title="3. Exercise 2: Scanning a Private Network" href="exercise2.html" />
     <link rel="prev" title="1. Introduction" href="introduction.html" /> 
   </head>
   <body role="document">
@@ -35,7 +35,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="ftp-reference.html" title="3. Introduction to the FTP Protocol"
+          <a href="exercise2.html" title="3. Exercise 2: Scanning a Private Network"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="introduction.html" title="1. Introduction"
@@ -55,15 +55,15 @@
 connecting to any port on any IP address. But home routers and companies usually have their own
 internal, private network. We can only connect to IP addresses and ports on a private network by going
 through a router configured to allow that.</p>
-<p>The first exercise will be learning how to see what services are accessible on an Internet server. In the
-Introduction I explained what ports are, and we&#8217;re going to connect to port 1, 2, …, 65535 to see which are
+<p>The first exercise will be learning how to see what services are accessible on a server you can access. In the
+Introduction I explained what ports are. We&#8217;re going to talk to port 1, 2, …, 65535 to see which are
 listening.</p>
 <div class="section" id="task-1-manually-with-netcat">
 <h2>2.1. Task 1: Manually with netcat<a class="headerlink" href="#task-1-manually-with-netcat" title="Permalink to this headline">¶</a></h2>
-<p>We&#8217;d like to connect to each port in turn, and see if our connection is successful, is rejected, or times
+<p>We&#8217;d like to connect to each port in turn and see if our connection is successful, is rejected, or times
 out. A successful connection tells us a service is listening on that port, and often the service sends you
-its name when you open the connection. A rejected connection is immediately closed, which commonly means a
-firewall in place. A connection that times out is either firewalled or nothing was listening on that port.</p>
+its name when you open the connection. A connection dropped by a firewall will time out after awhile. A
+connection rejected by a firewall or with nothing listening will fail to connect immediately.</p>
 <p>We can use netcat to open a connection to a chosen IP address and port, then see what comes back</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span># Connect over TCP to 192.168.56.101 port 22 (notated as 192.168.56.101:22).
 # netcat is often called nc
@@ -96,8 +96,8 @@ Nmap done: 1 IP address (1 host up) scanned in 0.09 seconds
 </pre></div>
 </div>
 <p>Port 80 (HTTP) and 443 (HTTPS) are a webserver. Port 22 is SSH, used for logging into a shell remotely.
-But Port 21 is FTP, which is used for sharing files. In the next exercise we&#8217;ll learn how services can be
-used to access private networks!</p>
+But Port 21 is FTP, which is used for sharing files.</p>
+<p>In the next exercise we&#8217;ll learn how services can be used to access private networks! <a class="reference internal" href="exercise2.html#ref-exercise2"><span class="std std-ref">Exercise 2: Scanning a Private Network</span></a></p>
 </div>
 </div>
 
@@ -120,8 +120,8 @@ used to access private networks!</p>
   <p class="topless"><a href="introduction.html"
                         title="previous chapter">1. Introduction</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="ftp-reference.html"
-                        title="next chapter">3. Introduction to the FTP Protocol</a></p>
+  <p class="topless"><a href="exercise2.html"
+                        title="next chapter">3. Exercise 2: Scanning a Private Network</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -150,7 +150,7 @@ used to access private networks!</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="ftp-reference.html" title="3. Introduction to the FTP Protocol"
+          <a href="exercise2.html" title="3. Exercise 2: Scanning a Private Network"
              >next</a> |</li>
         <li class="right" >
           <a href="introduction.html" title="1. Introduction"

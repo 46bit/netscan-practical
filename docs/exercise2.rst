@@ -4,24 +4,35 @@
 Exercise 2: Scanning a Private Network
 ============================================================
 
-In Exercise 1 we scanned a publicly-accessible Internet server (set up solely for this exercise; scanning
-real Internet servers you don't control may be illegal). In this Exercise we're going to use its FTP server
-to see if that server is on a private network, and try to access services running across the private network.
+In Exercise 1 we scanned a publicly-accessible server, and discovered it was running an FTP service. In this
+exercise we're going to abuse that FTP server to reconnoiter the private network it is connected to. Then
+we'll see if we can do anything useful to an attacker.
 
-The original FTP specification allowed for data connections being sent anywhere. However as the Internet
-matured this became a security problem.
+For the purposes of this Exercise we have revived a security issue from the mid-90s, where people started to
+use a design quirk of the FTP protocol in this manner. Modern exploits can deliver similar capabilities but
+tend to be much more complex, which would complicate this simple example.
 
-Back in 1995, the U.S. restricted the export of software using cryptography. The U.S. produced a lot of
-software used worldwide, and still does. The aim was to force the rest of the world to use encryption that
-the U.S. government could crack. However online open source software might just restrict downloads to U.S.
-IP addresses. Much of this software was hosted on FTP servers.
+------------------------------------------------------------
+Design of The FTP Protocol
+------------------------------------------------------------
 
-Attention was drawn to FTP Bounce because it would let a foreign server download IP-restricted software by
-using a U.S. server as an unwitting proxy.
+This gives a qualitative explanation of what FTP is and how it works. For full details (potentially useful
+for the Tasks below) see the :ref:`ref_ftp_reference`.
 
-[DIAGRAM]
+FTP stands for File Transfer Protocol. It dates from 1971 but is still in widespread use. It is a standard
+for sharing files over the Internet - very much an old version of Dropbox or Google Drive. A typical session consists of an FTP client connecting to an FTP server on port 21. It then sends a login, e.g.
+``USER student`` and ``PASS golyeeHug6``.
 
-This feature also allowed you to access services on the same private network as the FTP Server. You can
+Provided the server accepts these details, the client can then send commands. Such as deleting a file,
+``DELE file.txt``. They can also get data from the server. For commands which return data, such as a list of
+files in the current directory or the contents of a file, FTP uses a separate connection to send that data.
+
+The Client sends ``PORT A,B,C,D,P1,P2`` to indicate the IP Address A.B.C.D and Port P1P2 that the server can
+open the data connection to. Then the client can ask for a file list by sending ``LIST``. Or download a file
+by sending ``RETR file2.txt``. Or upload a file by sending ``STOR file3.txt``. In that last case, the server
+opens the Data connection and the client sends the data along it.
+
+This feature also allows you to access services on the same private network as the FTP Server. You can
 specify any IP address and port in the ``PORT`` command - including ones you can't access on its local
 private network. Such as ``192.168.56.102``, which is in the private subnet.
 
@@ -107,3 +118,5 @@ noticed in Task 3 that there's an FTP server running on port 21 of ``192.168.56.
 Here's the trick: you can send the contents of a file to the FTP server on port 21 of ``192.168.56.102`` and
 it'll interpret each line of the contents as a command. So you can tell it to do things. Like send you their
 secret weapon blueprints.
+
+`Conclusion → <conclusion.html>`_

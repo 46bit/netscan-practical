@@ -9,18 +9,18 @@ connecting to any port on any IP address. But home routers and companies usually
 internal, private network. We can only connect to IP addresses and ports on a private network by going
 through a router configured to allow that.
 
-The first exercise will be learning how to see what services are accessible on an Internet server. In the
-Introduction I explained what ports are, and we're going to connect to port 1, 2, …, 65535 to see which are
+The first exercise will be learning how to see what services are accessible on a server you can access. In the
+Introduction I explained what ports are. We're going to talk to port 1, 2, …, 65535 to see which are
 listening.
 
 ------------------------------------------------------------
 Task 1: Manually with netcat
 ------------------------------------------------------------
 
-We'd like to connect to each port in turn, and see if our connection is successful, is rejected, or times
+We'd like to connect to each port in turn and see if our connection is successful, is rejected, or times
 out. A successful connection tells us a service is listening on that port, and often the service sends you
-its name when you open the connection. A rejected connection is immediately closed, which commonly means a
-firewall in place. A connection that times out is either firewalled or nothing was listening on that port.
+its name when you open the connection. A connection dropped by a firewall will time out after awhile. A
+connection rejected by a firewall or with nothing listening will fail to connect immediately.
 
 We can use netcat to open a connection to a chosen IP address and port, then see what comes back ::
 
@@ -56,5 +56,6 @@ of options to throttle it and for different sorts of scanning. We're going to us
     Nmap done: 1 IP address (1 host up) scanned in 0.09 seconds
 
 Port 80 (HTTP) and 443 (HTTPS) are a webserver. Port 22 is SSH, used for logging into a shell remotely.
-But Port 21 is FTP, which is used for sharing files. In the next exercise we'll learn how services can be
-used to access private networks!
+But Port 21 is FTP, which is used for sharing files.
+
+In the next exercise we'll learn how services can be used to access private networks! :ref:`ref_exercise2`

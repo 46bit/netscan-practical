@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. Exercise 2: Scanning a Private Network &mdash; dbinfer 0.1.0b documentation</title>
+    <title>3. Exercise 2: Scanning a Private Network &mdash; dbinfer 0.1.0b documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="dbinfer 0.1.0b documentation" href="index.html" />
-    <link rel="next" title="5. Conclusion" href="conclusion.html" />
-    <link rel="prev" title="3. Introduction to the FTP Protocol" href="ftp-reference.html" /> 
+    <link rel="next" title="4. FTP Protocol Reference" href="ftp-reference.html" />
+    <link rel="prev" title="2. Exercise 1: Scanning servers" href="exercise1.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -35,10 +35,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="conclusion.html" title="5. Conclusion"
+          <a href="ftp-reference.html" title="4. FTP Protocol Reference"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="ftp-reference.html" title="3. Introduction to the FTP Protocol"
+          <a href="exercise1.html" title="2. Exercise 1: Scanning servers"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
       </ul>
@@ -50,20 +50,28 @@
           <div class="body" role="main">
             
   <div class="section" id="exercise-2-scanning-a-private-network">
-<span id="ref-exercise2"></span><h1>4. Exercise 2: Scanning a Private Network<a class="headerlink" href="#exercise-2-scanning-a-private-network" title="Permalink to this headline">¶</a></h1>
-<p>In Exercise 1 we scanned a publicly-accessible Internet server (set up solely for this exercise; scanning
-real Internet servers you don&#8217;t control may be illegal). In this Exercise we&#8217;re going to use its FTP server
-to see if that server is on a private network, and try to access services running across the private network.</p>
-<p>The original FTP specification allowed for data connections being sent anywhere. However as the Internet
-matured this became a security problem.</p>
-<p>Back in 1995, the U.S. restricted the export of software using cryptography. The U.S. produced a lot of
-software used worldwide, and still does. The aim was to force the rest of the world to use encryption that
-the U.S. government could crack. However online open source software might just restrict downloads to U.S.
-IP addresses. Much of this software was hosted on FTP servers.</p>
-<p>Attention was drawn to FTP Bounce because it would let a foreign server download IP-restricted software by
-using a U.S. server as an unwitting proxy.</p>
-<p>[DIAGRAM]</p>
-<p>This feature also allowed you to access services on the same private network as the FTP Server. You can
+<span id="ref-exercise2"></span><h1>3. Exercise 2: Scanning a Private Network<a class="headerlink" href="#exercise-2-scanning-a-private-network" title="Permalink to this headline">¶</a></h1>
+<p>In Exercise 1 we scanned a publicly-accessible server, and discovered it was running an FTP service. In this
+exercise we&#8217;re going to abuse that FTP server to reconnoiter the private network it is connected to. Then
+we&#8217;ll see if we can do anything useful to an attacker.</p>
+<p>For the purposes of this Exercise we have revived a security issue from the mid-90s, where people started to
+use a design quirk of the FTP protocol in this manner. Modern exploits can deliver similar capabilities but
+tend to be much more complex, which would complicate this simple example.</p>
+<div class="section" id="design-of-the-ftp-protocol">
+<h2>3.1. Design of The FTP Protocol<a class="headerlink" href="#design-of-the-ftp-protocol" title="Permalink to this headline">¶</a></h2>
+<p>This gives a qualitative explanation of what FTP is and how it works. For full details (potentially useful
+for the Tasks below) see the <a class="reference internal" href="ftp-reference.html#ref-ftp-reference"><span class="std std-ref">FTP Protocol Reference</span></a>.</p>
+<p>FTP stands for File Transfer Protocol. It dates from 1971 but is still in widespread use. It is a standard
+for sharing files over the Internet - very much an old version of Dropbox or Google Drive. A typical session consists of an FTP client connecting to an FTP server on port 21. It then sends a login, e.g.
+<code class="docutils literal"><span class="pre">USER</span> <span class="pre">student</span></code> and <code class="docutils literal"><span class="pre">PASS</span> <span class="pre">golyeeHug6</span></code>.</p>
+<p>Provided the server accepts these details, the client can then send commands. Such as deleting a file,
+<code class="docutils literal"><span class="pre">DELE</span> <span class="pre">file.txt</span></code>. They can also get data from the server. For commands which return data, such as a list of
+files in the current directory or the contents of a file, FTP uses a separate connection to send that data.</p>
+<p>The Client sends <code class="docutils literal"><span class="pre">PORT</span> <span class="pre">A,B,C,D,P1,P2</span></code> to indicate the IP Address A.B.C.D and Port P1P2 that the server can
+open the data connection to. Then the client can ask for a file list by sending <code class="docutils literal"><span class="pre">LIST</span></code>. Or download a file
+by sending <code class="docutils literal"><span class="pre">RETR</span> <span class="pre">file2.txt</span></code>. Or upload a file by sending <code class="docutils literal"><span class="pre">STOR</span> <span class="pre">file3.txt</span></code>. In that last case, the server
+opens the Data connection and the client sends the data along it.</p>
+<p>This feature also allows you to access services on the same private network as the FTP Server. You can
 specify any IP address and port in the <code class="docutils literal"><span class="pre">PORT</span></code> command - including ones you can&#8217;t access on its local
 private network. Such as <code class="docutils literal"><span class="pre">192.168.56.102</span></code>, which is in the private subnet.</p>
 <p>Usefully for network scanning, the FTP Server tells you over the command port whether it was able to
@@ -79,8 +87,9 @@ network:</p>
 <li>Interact with internal, private FTP servers.</li>
 <li>Send commands to some shells and databases, but generally not read the output.</li>
 </ul>
+</div>
 <div class="section" id="task-1-experiment-with-ftp">
-<h2>4.1. Task 1: Experiment with FTP<a class="headerlink" href="#task-1-experiment-with-ftp" title="Permalink to this headline">¶</a></h2>
+<h2>3.2. Task 1: Experiment with FTP<a class="headerlink" href="#task-1-experiment-with-ftp" title="Permalink to this headline">¶</a></h2>
 <p>In <code class="docutils literal"><span class="pre">ftp/examples</span></code> you&#8217;ll find a number of Python scripts. These are examples of how to do various
 operations, as explained in <a class="reference external" href="ftp-reference.html#a-short-incomplete-but-useful-command-reference">the FTP reference</a>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Try uploading a file.</span>
@@ -104,14 +113,14 @@ operations, as explained in <a class="reference external" href="ftp-reference.ht
 work.</p>
 </div>
 <div class="section" id="task-2-discover-hosts-on-the-internal-network">
-<h2>4.2. Task 2: Discover hosts on the internal network<a class="headerlink" href="#task-2-discover-hosts-on-the-internal-network" title="Permalink to this headline">¶</a></h2>
+<h2>3.3. Task 2: Discover hosts on the internal network<a class="headerlink" href="#task-2-discover-hosts-on-the-internal-network" title="Permalink to this headline">¶</a></h2>
 <p>Try adapting <code class="docutils literal"><span class="pre">examples/remote_port.py</span></code> to send data to port 22 of each IP Address on <code class="docutils literal"><span class="pre">192.168.X.X</span></code>. So
 you&#8217;ll want to iterate through <code class="docutils literal"><span class="pre">192.168.0.1</span></code>, …, <code class="docutils literal"><span class="pre">192.168.0.255</span></code>, <code class="docutils literal"><span class="pre">192.168.1.0</span></code>, …, <code class="docutils literal"><span class="pre">192.168.1.255</span></code>,
 …, <code class="docutils literal"><span class="pre">192.168.255.255</span></code>. Make a list of which IP Addresses did connect, as these are the hosts on their
 private network.</p>
 </div>
 <div class="section" id="task-3-port-scan-discovered-hosts">
-<h2>4.3. Task 3: Port scan discovered hosts<a class="headerlink" href="#task-3-port-scan-discovered-hosts" title="Permalink to this headline">¶</a></h2>
+<h2>3.4. Task 3: Port scan discovered hosts<a class="headerlink" href="#task-3-port-scan-discovered-hosts" title="Permalink to this headline">¶</a></h2>
 <p>Now you&#8217;re going to find what TCP services are running on a machine on the FTP Server&#8217;s private network.
 Namely on <code class="docutils literal"><span class="pre">192.168.56.102</span></code>. To do this, you&#8217;ll want to detect successful vs unsuccessful openings of the
 data connection.</p>
@@ -124,7 +133,7 @@ a file on the FTP server.</p>
 <p>You should start to sense how you discover what is running, and get to look for options for attack.</p>
 </div>
 <div class="section" id="task-4-exfiltrate-data-from-a-private-ftp-server">
-<h2>4.4. Task 4: Exfiltrate data from a private FTP server<a class="headerlink" href="#task-4-exfiltrate-data-from-a-private-ftp-server" title="Permalink to this headline">¶</a></h2>
+<h2>3.5. Task 4: Exfiltrate data from a private FTP server<a class="headerlink" href="#task-4-exfiltrate-data-from-a-private-ftp-server" title="Permalink to this headline">¶</a></h2>
 <p>For our next task we want to retrieve secret files from this network&#8217;s private FTP server. You may have
 noticed in Task 3 that there&#8217;s an FTP server running on port 21 of <code class="docutils literal"><span class="pre">192.168.56.102</span></code>. If you try
 <code class="docutils literal"><span class="pre">nc</span> <span class="pre">192.168.56.102</span> <span class="pre">21</span></code> you&#8217;ll find you can&#8217;t connect from your own computer. But you&#8217;ve found that
@@ -132,6 +141,7 @@ noticed in Task 3 that there&#8217;s an FTP server running on port 21 of <code c
 <p>Here&#8217;s the trick: you can send the contents of a file to the FTP server on port 21 of <code class="docutils literal"><span class="pre">192.168.56.102</span></code> and
 it&#8217;ll interpret each line of the contents as a command. So you can tell it to do things. Like send you their
 secret weapon blueprints.</p>
+<p><a class="reference external" href="conclusion.html">Conclusion →</a></p>
 </div>
 </div>
 
@@ -143,21 +153,22 @@ secret weapon blueprints.</p>
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">4. Exercise 2: Scanning a Private Network</a><ul>
-<li><a class="reference internal" href="#task-1-experiment-with-ftp">4.1. Task 1: Experiment with FTP</a></li>
-<li><a class="reference internal" href="#task-2-discover-hosts-on-the-internal-network">4.2. Task 2: Discover hosts on the internal network</a></li>
-<li><a class="reference internal" href="#task-3-port-scan-discovered-hosts">4.3. Task 3: Port scan discovered hosts</a></li>
-<li><a class="reference internal" href="#task-4-exfiltrate-data-from-a-private-ftp-server">4.4. Task 4: Exfiltrate data from a private FTP server</a></li>
+<li><a class="reference internal" href="#">3. Exercise 2: Scanning a Private Network</a><ul>
+<li><a class="reference internal" href="#design-of-the-ftp-protocol">3.1. Design of The FTP Protocol</a></li>
+<li><a class="reference internal" href="#task-1-experiment-with-ftp">3.2. Task 1: Experiment with FTP</a></li>
+<li><a class="reference internal" href="#task-2-discover-hosts-on-the-internal-network">3.3. Task 2: Discover hosts on the internal network</a></li>
+<li><a class="reference internal" href="#task-3-port-scan-discovered-hosts">3.4. Task 3: Port scan discovered hosts</a></li>
+<li><a class="reference internal" href="#task-4-exfiltrate-data-from-a-private-ftp-server">3.5. Task 4: Exfiltrate data from a private FTP server</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="ftp-reference.html"
-                        title="previous chapter">3. Introduction to the FTP Protocol</a></p>
+  <p class="topless"><a href="exercise1.html"
+                        title="previous chapter">2. Exercise 1: Scanning servers</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="conclusion.html"
-                        title="next chapter">5. Conclusion</a></p>
+  <p class="topless"><a href="ftp-reference.html"
+                        title="next chapter">4. FTP Protocol Reference</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -186,10 +197,10 @@ secret weapon blueprints.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="conclusion.html" title="5. Conclusion"
+          <a href="ftp-reference.html" title="4. FTP Protocol Reference"
              >next</a> |</li>
         <li class="right" >
-          <a href="ftp-reference.html" title="3. Introduction to the FTP Protocol"
+          <a href="exercise1.html" title="2. Exercise 1: Scanning servers"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
       </ul>

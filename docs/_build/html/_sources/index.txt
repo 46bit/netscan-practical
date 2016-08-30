@@ -12,8 +12,8 @@ Contents:
 
     introduction
     exercise1
-    ftp-reference
     exercise2
+    ftp-reference
     conclusion
     licence
 
