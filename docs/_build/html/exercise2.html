@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>3. Exercise 2: Scanning a Private Network &mdash; dbinfer 0.1.0b documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0b',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="dbinfer 0.1.0b documentation" href="index.html" />
+    <link rel="next" title="4. Introduction to the FTP Protocol" href="ftp-reference.html" />
+    <link rel="prev" title="2. Exercise 1: Scanning servers" href="exercise1.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ftp-reference.html" title="4. Introduction to the FTP Protocol"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="exercise1.html" title="2. Exercise 1: Scanning servers"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="exercise-2-scanning-a-private-network">
+<span id="ref-exercise2"></span><h1>3. Exercise 2: Scanning a Private Network<a class="headerlink" href="#exercise-2-scanning-a-private-network" title="Permalink to this headline">¶</a></h1>
+<p>The original FTP specification allowed for data connections being sent anywhere. However as the Internet
+matured this became a security problem.</p>
+<p>Back in 1995, the U.S. restricted the export of software using cryptography. The U.S. produced a lot of
+software used worldwide, and still does. The aim was to force the rest of the world to use encryption that
+the U.S. government could crack. However online open source software might just restrict downloads to U.S.
+IP addresses. Much of this software was hosted on FTP servers.</p>
+<p>Attention was drawn to FTP Bounce because it would let a foreign server download IP-restricted software by
+using a U.S. server as an unwitting proxy.</p>
+<p>[DIAGRAM]</p>
+<p>This feature also allowed you to access services on the same private network as the FTP Server. You can
+specify any IP address and port in the <code class="docutils literal"><span class="pre">PORT</span></code> command - including ones you can&#8217;t access on its local
+private network. Such as <code class="docutils literal"><span class="pre">192.168.56.102</span></code>, which is in the private subnet.</p>
+<p>Usefully for network scanning, the FTP Server tells you over the command port whether it was able to
+establish a data connection or not. But that&#8217;s after opening a TCP connection and sending data that might
+be the contents of a file you uploaded.</p>
+<p>[EXCERPT]</p>
+<p>FTP Bounce lets you send chosen TCP data to a specified IP Address and Port, and tells you whether a
+connection could be established. This lets you do lots of things useful for learning about someone&#8217;s
+network:</p>
+<ul class="simple">
+<li>Discover their internal servers.</li>
+<li>Enumerate which services are running.</li>
+<li>Interact with internal, private FTP servers.</li>
+<li>Send commands to some shells and databases, but generally not read the output.</li>
+</ul>
+<div class="section" id="task-1-experiment-with-ftp">
+<h2>3.1. Task 1: Experiment with FTP<a class="headerlink" href="#task-1-experiment-with-ftp" title="Permalink to this headline">¶</a></h2>
+<p>In <code class="docutils literal"><span class="pre">ftp/examples</span></code> you&#8217;ll find a number of Python scripts. These are examples of how to do various
+operations, as explained in <a class="reference external" href="ftp-reference.html#a-short-incomplete-but-useful-command-reference">the FTP reference</a>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Try uploading a file.</span>
+<span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">stor</span><span class="o">.</span><span class="n">py</span>
+
+<span class="c1"># Try listing files in the current directory.</span>
+<span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">retr</span><span class="o">.</span><span class="n">py</span>
+
+<span class="c1"># Try retrieving a file.</span>
+<span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">retr</span><span class="o">.</span><span class="n">py</span>
+
+<span class="c1"># Try deleting a file.</span>
+<span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">retr</span><span class="o">.</span><span class="n">py</span>
+
+<span class="c1"># Try sending data to a another service.</span>
+<span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">remote_port</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>You&#8217;ll notice these examples all print the commands moving back and forth. This is controlled by a
+<code class="docutils literal"><span class="pre">debug=True</span></code> parameter you can see if you open up the files. Play about and get familiar with how things
+work.</p>
+</div>
+<div class="section" id="task-2-port-scanning">
+<h2>3.2. Task 2: Port Scanning<a class="headerlink" href="#task-2-port-scanning" title="Permalink to this headline">¶</a></h2>
+<p>Now you&#8217;re going to find what TCP services are running on a machine on the FTP Server&#8217;s private network.
+Namely on <code class="docutils literal"><span class="pre">192.168.56.102</span></code>. To do this, you&#8217;ll want to detect successful vs unsuccessful openings of the
+data connection.</p>
+<p>Use the code from <code class="docutils literal"><span class="pre">python3</span> <span class="pre">examples/remote_port.py</span></code> to access port <code class="docutils literal"><span class="pre">22</span></code> on <code class="docutils literal"><span class="pre">192.168.56.102</span></code>, where SSH
+will be running. Note down the final response you get. Then try a random high port (e.g. 34989) and see what
+the response is when nothing is on that port.</p>
+<p>Now go try this for all ports from 1 to 65,535. Try searching what those port numbers correspond to, if
+anything. You can also use the <code class="docutils literal"><span class="pre">RETR</span></code> command to read anything the service outputs upon connecting into
+a file on the FTP server.</p>
+<p>You should start to sense how you discover what is running, and get to look for options for attack.</p>
+</div>
+<div class="section" id="task-3-sending-commands-to-another-ftp-server">
+<h2>3.3. Task 3: Sending commands to another FTP server<a class="headerlink" href="#task-3-sending-commands-to-another-ftp-server" title="Permalink to this headline">¶</a></h2>
+<p>For our next task we want to retrieve secret files from this network&#8217;s private FTP server. You may have
+noticed in Task 2 that the</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3. Exercise 2: Scanning a Private Network</a><ul>
+<li><a class="reference internal" href="#task-1-experiment-with-ftp">3.1. Task 1: Experiment with FTP</a></li>
+<li><a class="reference internal" href="#task-2-port-scanning">3.2. Task 2: Port Scanning</a></li>
+<li><a class="reference internal" href="#task-3-sending-commands-to-another-ftp-server">3.3. Task 3: Sending commands to another FTP server</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="exercise1.html"
+                        title="previous chapter">2. Exercise 1: Scanning servers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ftp-reference.html"
+                        title="next chapter">4. Introduction to the FTP Protocol</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/exercise2.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ftp-reference.html" title="4. Introduction to the FTP Protocol"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="exercise1.html" title="2. Exercise 1: Scanning servers"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Howard Chivers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

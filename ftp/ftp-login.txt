@@ -1,2 +1,0 @@
-user student
-pass golyeeHug6

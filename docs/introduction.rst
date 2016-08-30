@@ -1,8 +1,8 @@
 .. _ref_introduction:
 
-============
+============================================================
 Introduction
-============
+============================================================
 
 This exercise is going to give a basic introduction to Network Security. You'll build a port scanner that
 gets inside private networks using an FTP vulnerability, use the scanner to identify services running on a
@@ -11,9 +11,9 @@ At each stage we'll also look at the means and mindset to defend against these p
 
 To begin with here's a *basic* refresher on TCP networking.
 
-----------------
+------------------------------------------------------------
 Ports
-----------------
+------------------------------------------------------------
 
 At one time computers ran a single program at a time. That program had complete access to everything included to the computer, including any links to other computers. Any data received from a network would be passed to that single program.
 
@@ -23,15 +23,15 @@ Those days are long gone: modern computers are often running dozens of different
 
 This is remarkably useful. It also presents an issue when you're trying to secure a computer system: how do you check if all the programs listening on the network are secure enough to be allowed to do so? From the attacker's point of view the same checks can be used to identify potentially vulnerable services to attack.
 
-----------------
+------------------------------------------------------------
 Services
-----------------
+------------------------------------------------------------
 
 In the decades since multitasking arrived, engineers have tried to standardise how you do particular things across a network. There is massive technical complexity in how networks function, and without some standardisation it would impossible to keep the Internet in one piece.
 
-************************************
+************************************************************
 Example: opening a webpage
-************************************
+************************************************************
 
 One example of this is opening `http://www.york.ac.uk/` in your browser.
 
@@ -65,9 +65,9 @@ Here's some common services we'll see later:
 * **DNS** (port 53): used to resolve domain names like `york.ac.uk` or `tumblr.com` into a 32-bit or 128-bit value that network routers can use to route your packets.
 * **NTP** (port 123): used to keep your computer's clock syncronised with online atomic clocks.
 
-----------------
+------------------------------------------------------------
 Network Scanning
-----------------
+------------------------------------------------------------
 
 You're the administrator of your personal computer. You own it and you configure it however you like. But
 most people know nothing about networks or computer security. Even a lot of programmers know very little

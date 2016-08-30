@@ -1,3 +1,13 @@
+# Heavily based upon the Python3 FTP library and subject to the Python license.
+
+# Changes and improvements suggested by Steve Majewski.
+# Modified by Jack to work on the mac.
+# Modified by Siebren to support docstrings and PASV.
+# Modified by Phil Schwartz to add storbinary and storlines callbacks.
+# Modified by Giampaolo Rodola' to add TLS support.
+# Almost entirely rewritten by Michael Mokrysz to make suitable for FTP protocol hacking,
+#   in particular teaching students about FTP Bounce.
+
 import os, sys, socket, time, collections, re
 from socket import _GLOBAL_DEFAULT_TIMEOUT
 

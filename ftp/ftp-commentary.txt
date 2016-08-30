@@ -1,8 +1,3 @@
-student opens an FTP connection and downloads a file
-student opens an FTP connection and downloads a file passively
-student opens an FTP connection and sends a file somewhere else
-student opens an FTP connection and finds a port doesn't exist
-
 This vulnerability allows you to discover services accessible by the FTP Server itself. It also allows you to send data to those services. An FTP Server accessible to the FTP Server but not yourself can be accessed by having the FTP Server send a file of commands to its command port 21.
 
 The original FTP specification allowed for data connections being sent anywhere. However as the Internet matured this became apparent as a bad idea.

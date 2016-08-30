@@ -1,0 +1,22 @@
+Collecting information
+
+- Enumeration: Portscan 1..65535 on given host.
+  - Use nmap to do this.
+  - Note FTP. We're going to use an FTP technique from 1995.
+    - This behaviour has been prevented for 20 years, yet it's a good demo of network security now.
+
+- Private network scanning.
+  - Use FTP:
+    - Discovery: Open port 22 on every 192.168.*.* host.
+    - Enumeration: For discovered hosts, port-scan 1..65535.
+    - Then show that you can do this from nmap.
+  - Steal company data from an internal FTP server.
+    - Should not allow anonymous login.
+
+- Conclusion discusses prevention strategies.
+  - Up-to-date software limits use of vulnerabilities to well-resourced attackers with zero-days.
+  - Provided things are securely configured, which is often the problem. e.g. anonymous internal FTP server
+  - Public FTP server should not be on internal network: DMZs.
+    - Are DMZs old-hat or still something to mention?
+  - However insiders, social engineers (e.g. spearphishing) and well-resourced attackers will still get on
+    your internal network. Aim is to make this more difficult, but cannot assume this won't happen.

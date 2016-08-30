@@ -1,7 +1,0 @@
-user student
-pass golyeeHug6
-cwd export-restricted-crypto
-type i
-port 192,168,56,101,139,86
-retr file.txt
-quit
