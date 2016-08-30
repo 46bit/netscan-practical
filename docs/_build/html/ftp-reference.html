@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. Introduction to the FTP Protocol &mdash; dbinfer 0.1.0b documentation</title>
+    <title>3. Introduction to the FTP Protocol &mdash; dbinfer 0.1.0b documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="dbinfer 0.1.0b documentation" href="index.html" />
-    <link rel="next" title="5. Licence" href="licence.html" />
-    <link rel="prev" title="3. Exercise 2: Port Scanning a Private Network via FTP Bounce" href="exercise2.html" /> 
+    <link rel="next" title="4. Exercise 2: Scanning a Private Network" href="exercise2.html" />
+    <link rel="prev" title="2. Exercise 1: Scanning servers" href="exercise1.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -35,10 +35,10 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="licence.html" title="5. Licence"
+          <a href="exercise2.html" title="4. Exercise 2: Scanning a Private Network"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="exercise2.html" title="3. Exercise 2: Port Scanning a Private Network via FTP Bounce"
+          <a href="exercise1.html" title="2. Exercise 1: Scanning servers"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
       </ul>
@@ -50,15 +50,20 @@
           <div class="body" role="main">
             
   <div class="section" id="introduction-to-the-ftp-protocol">
-<span id="ref-ftp-reference"></span><h1>4. Introduction to the FTP Protocol<a class="headerlink" href="#introduction-to-the-ftp-protocol" title="Permalink to this headline">¶</a></h1>
+<span id="ref-ftp-reference"></span><h1>3. Introduction to the FTP Protocol<a class="headerlink" href="#introduction-to-the-ftp-protocol" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-is-ftp">
+<h2>3.1. What is FTP?<a class="headerlink" href="#what-is-ftp" title="Permalink to this headline">¶</a></h2>
+<p>FTP stands for File Transfer Protocol. It dates from 1971 but is still in widespread use. It is used to share
+files over the Internet - very much an old version of Dropbox or Google Drive.</p>
 <p>FTP uses a Command socket and a Data socket, two independent connections for one FTP &#8216;session.&#8217; To open an FTP Session, the FTP Client establishes a command connection by connecting to port 21 on the server. The
 FTP Server then replies with a &#8220;welcome&#8221; message - generally the name and version of the running FTP server.</p>
 <p>A lot of things about FTP seem unusual or bizarre now, but the FTP protocol predates HTTP (the protocol
 you use to load websites). It was standardised about as we use it here by 1985. As such we have decades
 of hindsight to judge it with. That it remains a common service reflects that it is &#8216;good enough&#8217; to keep
 using it rather than a more modern replacement.</p>
+</div>
 <div class="section" id="authentication">
-<h2>4.1. Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h2>
+<h2>3.2. Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
 <li>The FTP Client now sends a <code class="docutils literal"><span class="pre">USER</span> <span class="pre">username_here</span></code> message, to identify the user they wish to log in with.</li>
 <li>If the username exists, the FTP Server replies with a <code class="docutils literal"><span class="pre">331</span> <span class="pre">Password</span> <span class="pre">required</span> <span class="pre">for</span> <span class="pre">student</span></code> response - again on the Command connection.</li>
@@ -98,7 +103,7 @@ using it rather than a more modern replacement.</p>
 </table>
 </div>
 <div class="section" id="using-the-data-connection">
-<h2>4.2. Using the Data Connection<a class="headerlink" href="#using-the-data-connection" title="Permalink to this headline">¶</a></h2>
+<h2>3.3. Using the Data Connection<a class="headerlink" href="#using-the-data-connection" title="Permalink to this headline">¶</a></h2>
 <p>I mentioned that there are <em>two</em> types of connection in an FTP session. We&#8217;ve seen how the Command connection is used to pass commands and response messages back and forth, but no sign of the Data
 Connection. The Data Connection only comes in when performing commands that provide some data beyond just
 a status message. If uploading or downloading a file, the file contents go across a Data connection.</p>
@@ -163,7 +168,7 @@ connection. Once all the data is sent the server will close the connection and s
 </table>
 </div>
 <div class="section" id="a-short-incomplete-but-useful-command-reference">
-<h2>4.3. A Short, Incomplete but Useful Command Reference<a class="headerlink" href="#a-short-incomplete-but-useful-command-reference" title="Permalink to this headline">¶</a></h2>
+<h2>3.4. A Short, Incomplete but Useful Command Reference<a class="headerlink" href="#a-short-incomplete-but-useful-command-reference" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <colgroup>
 <col width="23%" />
@@ -213,20 +218,21 @@ connection. Once all the data is sent the server will close the connection and s
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">4. Introduction to the FTP Protocol</a><ul>
-<li><a class="reference internal" href="#authentication">4.1. Authentication</a></li>
-<li><a class="reference internal" href="#using-the-data-connection">4.2. Using the Data Connection</a></li>
-<li><a class="reference internal" href="#a-short-incomplete-but-useful-command-reference">4.3. A Short, Incomplete but Useful Command Reference</a></li>
+<li><a class="reference internal" href="#">3. Introduction to the FTP Protocol</a><ul>
+<li><a class="reference internal" href="#what-is-ftp">3.1. What is FTP?</a></li>
+<li><a class="reference internal" href="#authentication">3.2. Authentication</a></li>
+<li><a class="reference internal" href="#using-the-data-connection">3.3. Using the Data Connection</a></li>
+<li><a class="reference internal" href="#a-short-incomplete-but-useful-command-reference">3.4. A Short, Incomplete but Useful Command Reference</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="exercise2.html"
-                        title="previous chapter">3. Exercise 2: Port Scanning a Private Network via FTP Bounce</a></p>
+  <p class="topless"><a href="exercise1.html"
+                        title="previous chapter">2. Exercise 1: Scanning servers</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="licence.html"
-                        title="next chapter">5. Licence</a></p>
+  <p class="topless"><a href="exercise2.html"
+                        title="next chapter">4. Exercise 2: Scanning a Private Network</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -255,10 +261,10 @@ connection. Once all the data is sent the server will close the connection and s
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="licence.html" title="5. Licence"
+          <a href="exercise2.html" title="4. Exercise 2: Scanning a Private Network"
              >next</a> |</li>
         <li class="right" >
-          <a href="exercise2.html" title="3. Exercise 2: Port Scanning a Private Network via FTP Bounce"
+          <a href="exercise1.html" title="2. Exercise 1: Scanning servers"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
       </ul>

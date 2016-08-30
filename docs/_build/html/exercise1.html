@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="dbinfer 0.1.0b documentation" href="index.html" />
-    <link rel="next" title="3. Exercise 2: Scanning a Private Network" href="exercise2.html" />
+    <link rel="next" title="3. Introduction to the FTP Protocol" href="ftp-reference.html" />
     <link rel="prev" title="1. Introduction" href="introduction.html" /> 
   </head>
   <body role="document">
@@ -35,7 +35,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="exercise2.html" title="3. Exercise 2: Scanning a Private Network"
+          <a href="ftp-reference.html" title="3. Introduction to the FTP Protocol"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="introduction.html" title="1. Introduction"
@@ -65,7 +65,7 @@ out. A successful connection tells us a service is listening on that port, and o
 its name when you open the connection. A rejected connection is immediately closed, which commonly means a
 firewall in place. A connection that times out is either firewalled or nothing was listening on that port.</p>
 <p>We can use netcat to open a connection to a chosen IP address and port, then see what comes back</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span># Connect over TCP to 192.168.56.103 port 22 (notated as 192.168.56.103:22).
+<div class="highlight-default"><div class="highlight"><pre><span></span># Connect over TCP to 192.168.56.101 port 22 (notated as 192.168.56.101:22).
 # netcat is often called nc
 $ nc 192.168.56.103 22
 SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u2
@@ -81,9 +81,9 @@ that&#8217;s going to take a lot of your time. Let&#8217;s use an automated scan
 <p><code class="docutils literal"><span class="pre">nmap</span></code> is an automated scanning tool. It&#8217;s engineered to scan networks and servers quickly, but has a lot
 of options to throttle it and for different sorts of scanning. We&#8217;re going to use a very simple mode for now
 - the <code class="docutils literal"><span class="pre">nmap</span></code> equivalent of performing Task 1 by hand for every port.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>$ nmap 192.168.56.103
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ nmap 192.168.56.101
 Starting Nmap 7.12 ( https://nmap.org ) at 2016-08-30 12:05 BST
-Nmap scan report for 192.168.56.103
+Nmap scan report for 192.168.56.101
 Host is up (0.0017s latency).
 Not shown: 996 closed ports
 PORT    STATE SERVICE
@@ -120,8 +120,8 @@ used to access private networks!</p>
   <p class="topless"><a href="introduction.html"
                         title="previous chapter">1. Introduction</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="exercise2.html"
-                        title="next chapter">3. Exercise 2: Scanning a Private Network</a></p>
+  <p class="topless"><a href="ftp-reference.html"
+                        title="next chapter">3. Introduction to the FTP Protocol</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -150,7 +150,7 @@ used to access private networks!</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="exercise2.html" title="3. Exercise 2: Scanning a Private Network"
+          <a href="ftp-reference.html" title="3. Introduction to the FTP Protocol"
              >next</a> |</li>
         <li class="right" >
           <a href="introduction.html" title="1. Introduction"

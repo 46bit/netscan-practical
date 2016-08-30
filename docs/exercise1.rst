@@ -24,7 +24,7 @@ firewall in place. A connection that times out is either firewalled or nothing w
 
 We can use netcat to open a connection to a chosen IP address and port, then see what comes back ::
 
-    # Connect over TCP to 192.168.56.103 port 22 (notated as 192.168.56.103:22).
+    # Connect over TCP to 192.168.56.101 port 22 (notated as 192.168.56.101:22).
     # netcat is often called nc
     $ nc 192.168.56.103 22
     SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u2
@@ -42,9 +42,9 @@ Task 2: Automated port scanning with ``nmap``
 of options to throttle it and for different sorts of scanning. We're going to use a very simple mode for now
 - the ``nmap`` equivalent of performing Task 1 by hand for every port. ::
 
-    $ nmap 192.168.56.103
+    $ nmap 192.168.56.101
     Starting Nmap 7.12 ( https://nmap.org ) at 2016-08-30 12:05 BST
-    Nmap scan report for 192.168.56.103
+    Nmap scan report for 192.168.56.101
     Host is up (0.0017s latency).
     Not shown: 996 closed ports
     PORT    STATE SERVICE

@@ -4,6 +4,13 @@
 Introduction to the FTP Protocol
 ============================================================
 
+------------------------------------------------------------
+What is FTP?
+------------------------------------------------------------
+
+FTP stands for File Transfer Protocol. It dates from 1971 but is still in widespread use. It is used to share
+files over the Internet - very much an old version of Dropbox or Google Drive.
+
 FTP uses a Command socket and a Data socket, two independent connections for one FTP 'session.' To open an FTP Session, the FTP Client establishes a command connection by connecting to port 21 on the server. The
 FTP Server then replies with a "welcome" message - generally the name and version of the running FTP server.
 

@@ -4,6 +4,10 @@
 Exercise 2: Scanning a Private Network
 ============================================================
 
+In Exercise 1 we scanned a publicly-accessible Internet server (set up solely for this exercise; scanning
+real Internet servers you don't control may be illegal). In this Exercise we're going to use its FTP server
+to see if that server is on a private network, and try to access services running across the private network.
+
 The original FTP specification allowed for data connections being sent anywhere. However as the Internet
 matured this became a security problem.
 
@@ -65,7 +69,16 @@ You'll notice these examples all print the commands moving back and forth. This 
 work.
 
 ------------------------------------------------------------
-Task 2: Port Scanning
+Task 2: Discover hosts on the internal network
+------------------------------------------------------------
+
+Try adapting ``examples/remote_port.py`` to send data to port 22 of each IP Address on ``192.168.X.X``. So
+you'll want to iterate through ``192.168.0.1``, …, ``192.168.0.255``, ``192.168.1.0``, …, ``192.168.1.255``,
+…, ``192.168.255.255``. Make a list of which IP Addresses did connect, as these are the hosts on their
+private network.
+
+------------------------------------------------------------
+Task 3: Port scan discovered hosts
 ------------------------------------------------------------
 
 Now you're going to find what TCP services are running on a machine on the FTP Server's private network.
@@ -83,8 +96,14 @@ a file on the FTP server.
 You should start to sense how you discover what is running, and get to look for options for attack.
 
 ------------------------------------------------------------
-Task 3: Sending commands to another FTP server
+Task 4: Exfiltrate data from a private FTP server
 ------------------------------------------------------------
 
 For our next task we want to retrieve secret files from this network's private FTP server. You may have
-noticed in Task 2 that the
+noticed in Task 3 that there's an FTP server running on port 21 of ``192.168.56.102``. If you try
+``nc 192.168.56.102 21`` you'll find you can't connect from your own computer. But you've found that
+``192.168.56.101`` can.
+
+Here's the trick: you can send the contents of a file to the FTP server on port 21 of ``192.168.56.102`` and
+it'll interpret each line of the contents as a command. So you can tell it to do things. Like send you their
+secret weapon blueprints.
