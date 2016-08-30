@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>5. Conclusion &mdash; dbinfer 0.1.0b documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0b',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="dbinfer 0.1.0b documentation" href="index.html" />
+    <link rel="next" title="6. Licence" href="licence.html" />
+    <link rel="prev" title="4. Exercise 2: Scanning a Private Network" href="exercise2.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="licence.html" title="6. Licence"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="exercise2.html" title="4. Exercise 2: Scanning a Private Network"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="conclusion">
+<span id="ref-conclusion"></span><h1>5. Conclusion<a class="headerlink" href="#conclusion" title="Permalink to this headline">¶</a></h1>
+<p>As you&#8217;ve seen, a single vulnerability can let an attacker hop straight into an unprotected network. There
+are many discovered every year, and those looking hardest for them are those who want to keep them secret to
+use them. In addition, spearfishing (sending employees fake emails that seem completely legitimate) is often
+used to get software onto employee&#8217;s workstations.</p>
+<p>The approach must be to assume attackers will get onto your network and plan how you&#8217;ll make their life more difficult, detect them and defend against them once they do.</p>
+<div class="section" id="learning-from-this-exercise">
+<h2>5.1. Learning from this Exercise<a class="headerlink" href="#learning-from-this-exercise" title="Permalink to this headline">¶</a></h2>
+<p>A public FTP server is a little less common these days, but there might be a role for it. But you could have
+prevented the issue by:</p>
+<ul class="simple">
+<li>Keeping FTP up-to-date with security patches.</li>
+<li>Automated vulnerability scanning.</li>
+<li>Isolating the public FTP server so that it cannot connect to anything else on your network.</li>
+</ul>
+<p>You want to make clear divides in your network. Your webservers need read access to their databases, and some write access. But your public webservers don&#8217;t (or shouldn&#8217;t) need access to your company&#8217;s Research &amp; Development.</p>
+<p>Think of the, &#8220;employees do not have access to the vault,&#8221; signs banks have? The employees don&#8217;t have keys to open the vault because anyone could walk in with a shotgun, or get a lightly-vetted job there and steal the contents one afternoon. Similarly you don&#8217;t want someone to steal an employee&#8217;s laptop at a conference and then download all your corporate blueprints.</p>
+<p>The key way to separate these things is Screened Subnets. This is where you have a different IP ranges for the webservers to the Human Resources PCs to the corporate file stores, and any communication between them is subject to strict rules. This is the network example of having a one-way hatch for depositing money down a chute.</p>
+<ul class="simple">
+<li>Scanning the private network of the FTP server should have shown (at most) the other public webservers and nothing more important than that.</li>
+</ul>
+<p>The aim cannot be to keep attackers out of the entire network. Resourced attackers or those good at spearfishing will undoubtedly get inside your network. But you can try to separate different aspects of your network, to make an attacker&#8217;s job much more difficult and give you a chance to spot them. Unlike a vulnerable FTP server sending someone on the Internet your secret blueprints.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">5. Conclusion</a><ul>
+<li><a class="reference internal" href="#learning-from-this-exercise">5.1. Learning from this Exercise</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="exercise2.html"
+                        title="previous chapter">4. Exercise 2: Scanning a Private Network</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="licence.html"
+                        title="next chapter">6. Licence</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/conclusion.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="licence.html" title="6. Licence"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="exercise2.html" title="4. Exercise 2: Scanning a Private Network"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">dbinfer 0.1.0b documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2016, Howard Chivers.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

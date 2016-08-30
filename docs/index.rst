@@ -14,6 +14,7 @@ Contents:
     exercise1
     ftp-reference
     exercise2
+    conclusion
     licence
 
 Indices and tables
