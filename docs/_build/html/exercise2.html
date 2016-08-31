@@ -54,86 +54,154 @@
 <p>In Exercise 1 we scanned a publicly-accessible server, and discovered it was running an FTP service. In this
 exercise we&#8217;re going to abuse that FTP server to reconnoiter the private network it is connected to. Then
 we&#8217;ll see if we can do anything useful to an attacker.</p>
+<p><code class="docutils literal"><span class="pre">nmap</span></code> is software built specifically for Network Scanning. Here we&#8217;re repurposing legitimate services to
+scan networks we otherwise could not access.</p>
 <p>For the purposes of this Exercise we have revived a security issue from the mid-90s, where people started to
 use a design quirk of the FTP protocol in this manner. Modern exploits can deliver similar capabilities but
 tend to be much more complex, which would complicate this simple example.</p>
 <div class="section" id="design-of-the-ftp-protocol">
 <h2>3.1. Design of The FTP Protocol<a class="headerlink" href="#design-of-the-ftp-protocol" title="Permalink to this headline">¶</a></h2>
-<p>This gives a qualitative explanation of what FTP is and how it works. For full details (potentially useful
-for the Tasks below) see the <a class="reference internal" href="ftp-reference.html#ref-ftp-reference"><span class="std std-ref">FTP Protocol Reference</span></a>.</p>
 <p>FTP stands for File Transfer Protocol. It dates from 1971 but is still in widespread use. It is a standard
 for sharing files over the Internet - very much an old version of Dropbox or Google Drive. A typical session consists of an FTP client connecting to an FTP server on port 21. It then sends a login, e.g.
 <code class="docutils literal"><span class="pre">USER</span> <span class="pre">student</span></code> and <code class="docutils literal"><span class="pre">PASS</span> <span class="pre">golyeeHug6</span></code>.</p>
-<p>Provided the server accepts these details, the client can then send commands. Such as deleting a file,
-<code class="docutils literal"><span class="pre">DELE</span> <span class="pre">file.txt</span></code>. They can also get data from the server. For commands which return data, such as a list of
-files in the current directory or the contents of a file, FTP uses a separate connection to send that data.</p>
-<p>The Client sends <code class="docutils literal"><span class="pre">PORT</span> <span class="pre">A,B,C,D,P1,P2</span></code> to indicate the IP Address A.B.C.D and Port P1P2 that the server can
-open the data connection to. Then the client can ask for a file list by sending <code class="docutils literal"><span class="pre">LIST</span></code>. Or download a file
-by sending <code class="docutils literal"><span class="pre">RETR</span> <span class="pre">file2.txt</span></code>. Or upload a file by sending <code class="docutils literal"><span class="pre">STOR</span> <span class="pre">file3.txt</span></code>. In that last case, the server
-opens the Data connection and the client sends the data along it.</p>
-<p>This feature also allows you to access services on the same private network as the FTP Server. You can
-specify any IP address and port in the <code class="docutils literal"><span class="pre">PORT</span></code> command - including ones you can&#8217;t access on its local
-private network. Such as <code class="docutils literal"><span class="pre">192.168.56.102</span></code>, which is in the private subnet.</p>
-<p>Usefully for network scanning, the FTP Server tells you over the command port whether it was able to
-establish a data connection or not. But that&#8217;s after opening a TCP connection and sending data that might
-be the contents of a file you uploaded.</p>
-<p>[EXCERPT]</p>
-<p>FTP Bounce lets you send chosen TCP data to a specified IP Address and Port, and tells you whether a
-connection could be established. This lets you do lots of things useful for learning about someone&#8217;s
-network:</p>
+<p>Provided the server accepts these details, the client can then send commands. Such as deleting a file with
+<code class="docutils literal"><span class="pre">DELE</span> <span class="pre">file.txt</span></code>. If the deletion was successful, the server responds with a <code class="docutils literal"><span class="pre">250</span> <span class="pre">DELE</span> <span class="pre">command</span> <span class="pre">successful</span></code>
+message.</p>
+<div class="section" id="data-connections">
+<h3>3.1.1. Data Connections<a class="headerlink" href="#data-connections" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">DELE</span></code> command results in a simple success or failure message. But if you&#8217;re downloading or uploading
+file contents, FTP sends that data over a separate connection.</p>
+<ol class="arabic simple">
+<li>The Client sends <code class="docutils literal"><span class="pre">PORT</span> <span class="pre">A,B,C,D,P1,P2</span></code> to indicate the IP Address A.B.C.D and Port P1P2 that the server
+could open a data connection to.</li>
+<li>The Client then sends a command which requires a data connection. Such as <code class="docutils literal"><span class="pre">LIST</span></code> for a list of files in
+the current directory. Or <code class="docutils literal"><span class="pre">RETR</span> <span class="pre">file2.txt</span></code> to get the contents of the file <code class="docutils literal"><span class="pre">file2.txt</span></code>. Or
+<code class="docutils literal"><span class="pre">STOR</span> <span class="pre">file3.txt</span></code> to upload a file.</li>
+<li>The Server connects to the address specified by the previous <code class="docutils literal"><span class="pre">PORT</span></code> command, sends the data, and closes
+the connection. For file uploads, the Server opens the connection and the client sends data and closes it.</li>
+</ol>
+</div>
+<div class="section" id="ftp-bounce">
+<span id="ref-exercise2-ftp-bounce"></span><h3>3.1.2. FTP Bounce<a class="headerlink" href="#ftp-bounce" title="Permalink to this headline">¶</a></h3>
+<p>There was no requirement for that <code class="docutils literal"><span class="pre">PORT</span></code> command to go to the Client&#8217;s IP Address. You could send file
+contents anywhere the FTP Server could access. If the FTP server was connected to a private network, such
+as a home or corporate network, you could send data to hosts on that network.</p>
+<p>This tells you there isn&#8217;t an FTP server running on 192.168.56.102:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Client</span><span class="p">:</span> <span class="n">PORT</span> <span class="mi">192</span><span class="p">,</span><span class="mi">168</span><span class="p">,</span><span class="mi">56</span><span class="p">,</span><span class="mi">102</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">21</span>
+<span class="n">Server</span><span class="p">:</span> <span class="mi">200</span> <span class="n">PORT</span> <span class="n">command</span> <span class="n">successful</span>
+
+<span class="n">Client</span><span class="p">:</span> <span class="n">RETR</span> <span class="n">evil_ftp_commands</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">Server</span><span class="p">:</span> <span class="mi">425</span> <span class="n">Unable</span> <span class="n">to</span> <span class="n">build</span> <span class="n">data</span> <span class="n">connection</span><span class="p">:</span> <span class="n">Connection</span> <span class="n">refused</span>
+<span class="n">Server</span><span class="p">:</span> <span class="mi">450</span> <span class="n">LIST</span><span class="p">:</span> <span class="n">Connection</span> <span class="n">refused</span>
+</pre></div>
+</div>
+<p>This tells you there is an FTP server running on 192.168.56.103:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Client</span><span class="p">:</span> <span class="n">PORT</span> <span class="mi">192</span><span class="p">,</span><span class="mi">168</span><span class="p">,</span><span class="mi">56</span><span class="p">,</span><span class="mi">103</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">21</span>
+<span class="n">Server</span><span class="p">:</span> <span class="mi">200</span> <span class="n">PORT</span> <span class="n">command</span> <span class="n">successful</span>
+
+<span class="n">Client</span><span class="p">:</span> <span class="n">RETR</span> <span class="n">evil_ftp_commands</span><span class="o">.</span><span class="n">txt</span>
+<span class="n">Server</span><span class="p">:</span> <span class="mi">150</span> <span class="n">Opening</span> <span class="n">ASCII</span> <span class="n">mode</span> <span class="n">data</span> <span class="n">connection</span> <span class="k">for</span> <span class="n">file</span> <span class="nb">list</span>
+<span class="n">Server</span><span class="p">:</span> <span class="mi">226</span> <span class="n">Transfer</span> <span class="n">complete</span>
+</pre></div>
+</div>
+<p>You just sent the contents of <code class="docutils literal"><span class="pre">evil_ftp_commands.txt</span></code> to the FTP server on 192.168.56.103, and it will run
+the contents as FTP commands. If you include a <code class="docutils literal"><span class="pre">PORT</span></code> command pointing to you, you can even have that FTP
+Server send you a list of files or their contents.</p>
+<p>This technique is named FTP Bounce, as you&#8217;re bouncing requests off the FTP Server. With it you could:</p>
 <ul class="simple">
 <li>Discover their internal servers.</li>
 <li>Enumerate which services are running.</li>
 <li>Interact with internal, private FTP servers.</li>
 <li>Send commands to some shells and databases, but generally not read the output.</li>
 </ul>
+<p>For the following tasks, you will find this useful: <a class="reference internal" href="ftp-reference.html#ref-ftp-reference"><span class="std std-ref">FTP Protocol Reference</span></a></p>
+</div>
 </div>
 <div class="section" id="task-1-experiment-with-ftp">
 <h2>3.2. Task 1: Experiment with FTP<a class="headerlink" href="#task-1-experiment-with-ftp" title="Permalink to this headline">¶</a></h2>
 <p>In <code class="docutils literal"><span class="pre">ftp/examples</span></code> you&#8217;ll find a number of Python scripts. These are examples of how to do various
-operations, as explained in <a class="reference external" href="ftp-reference.html#a-short-incomplete-but-useful-command-reference">the FTP reference</a>.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Try uploading a file.</span>
-<span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">stor</span><span class="o">.</span><span class="n">py</span>
-
-<span class="c1"># Try listing files in the current directory.</span>
-<span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">retr</span><span class="o">.</span><span class="n">py</span>
-
-<span class="c1"># Try retrieving a file.</span>
-<span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">retr</span><span class="o">.</span><span class="n">py</span>
-
-<span class="c1"># Try deleting a file.</span>
-<span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">retr</span><span class="o">.</span><span class="n">py</span>
-
-<span class="c1"># Try sending data to a another service.</span>
-<span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">remote_port</span><span class="o">.</span><span class="n">py</span>
+operations, as explained in <a class="reference internal" href="ftp-reference.html#ref-ftp-reference"><span class="std std-ref">FTP Protocol Reference</span></a></p>
+<ol class="arabic">
+<li><p class="first">Try saving some text as a file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">examples</span><span class="o">/</span><span class="n">stor</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
+</li>
+<li><p class="first">Try listing files in the current directory:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">retr</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Try retrieving a file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">retr</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Try deleting a file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">retr</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Try sending data to a another service:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">examples</span><span class="o">/</span><span class="n">remote_port</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+</li>
+</ol>
 <p>You&#8217;ll notice these examples all print the commands moving back and forth. This is controlled by a
 <code class="docutils literal"><span class="pre">debug=True</span></code> parameter you can see if you open up the files. Play about and get familiar with how things
 work.</p>
 </div>
 <div class="section" id="task-2-discover-hosts-on-the-internal-network">
 <h2>3.3. Task 2: Discover hosts on the internal network<a class="headerlink" href="#task-2-discover-hosts-on-the-internal-network" title="Permalink to this headline">¶</a></h2>
-<p>Try adapting <code class="docutils literal"><span class="pre">examples/remote_port.py</span></code> to send data to port 22 of each IP Address on <code class="docutils literal"><span class="pre">192.168.X.X</span></code>. So
-you&#8217;ll want to iterate through <code class="docutils literal"><span class="pre">192.168.0.1</span></code>, …, <code class="docutils literal"><span class="pre">192.168.0.255</span></code>, <code class="docutils literal"><span class="pre">192.168.1.0</span></code>, …, <code class="docutils literal"><span class="pre">192.168.1.255</span></code>,
-…, <code class="docutils literal"><span class="pre">192.168.255.255</span></code>. Make a list of which IP Addresses did connect, as these are the hosts on their
-private network.</p>
+<p>This is the provided <code class="docutils literal"><span class="pre">examples/remote_port.py</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/..&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">cp_ftp</span> <span class="k">import</span> <span class="n">FTP</span>
+
+<span class="n">ftp</span> <span class="o">=</span> <span class="n">FTP</span><span class="p">(</span><span class="s2">&quot;192.168.56.101&quot;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ftp</span><span class="o">.</span><span class="n">send_login_commands</span><span class="p">(</span><span class="s2">&quot;student&quot;</span><span class="p">,</span> <span class="s2">&quot;golyeeHug6&quot;</span><span class="p">)</span>
+
+<span class="n">target_address</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;192.168.56.103&quot;</span><span class="p">,</span> <span class="mi">21</span><span class="p">)</span>
+<span class="n">ftp</span><span class="o">.</span><span class="n">send_port_command</span><span class="p">(</span><span class="n">target_address</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">ftp</span><span class="o">.</span><span class="n">recv_response</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+  <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ftp</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="s2">&quot;LIST&quot;</span><span class="p">)</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">ftp</span><span class="o">.</span><span class="n">recv_response</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">code</span> <span class="o">!=</span> <span class="mi">150</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+  <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># No Data is received because it was sent somewhere besides this program!</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">ftp</span><span class="o">.</span><span class="n">recv_response</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">code</span> <span class="o">!=</span> <span class="mi">226</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+  <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ftp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We&#8217;d like to quickly discover all hosts running on the <code class="docutils literal"><span class="pre">192.168.0.X</span></code> subnet. We could try every port on
+every host <code class="docutils literal"><span class="pre">192.168.0.1</span></code> through <code class="docutils literal"><span class="pre">192.168.0.255</span></code>, but that&#8217;s <code class="docutils literal"><span class="pre">255</span> <span class="pre">*</span> <span class="pre">65,536</span> <span class="pre">=</span> <span class="pre">16,711,680</span></code> attempts.</p>
+<p>To keep things quick, just check port <code class="docutils literal"><span class="pre">22</span></code> on each of those IP Addresses. To make things quicker, only scan
+from <code class="docutils literal"><span class="pre">192.168.0.101</span></code> to <code class="docutils literal"><span class="pre">192.168.0.132</span></code>.</p>
+<p>Make a list of which IP Addresses connect successfully.</p>
+<p>Hint: You can see the difference between successful/unsuccessful under <a class="reference internal" href="#ref-exercise2-ftp-bounce"><span class="std std-ref">FTP Bounce</span></a>. See whether code 150 was recieved.</p>
+<p>Hint: use a new <code class="docutils literal"><span class="pre">FTP</span></code> instance each time, and loop over each IP Address.</p>
 </div>
 <div class="section" id="task-3-port-scan-discovered-hosts">
 <h2>3.4. Task 3: Port scan discovered hosts<a class="headerlink" href="#task-3-port-scan-discovered-hosts" title="Permalink to this headline">¶</a></h2>
-<p>Now you&#8217;re going to find what TCP services are running on a machine on the FTP Server&#8217;s private network.
-Namely on <code class="docutils literal"><span class="pre">192.168.56.102</span></code>. To do this, you&#8217;ll want to detect successful vs unsuccessful openings of the
-data connection.</p>
-<p>Use the code from <code class="docutils literal"><span class="pre">python3</span> <span class="pre">examples/remote_port.py</span></code> to access port <code class="docutils literal"><span class="pre">22</span></code> on <code class="docutils literal"><span class="pre">192.168.56.102</span></code>, where SSH
-will be running. Note down the final response you get. Then try a random high port (e.g. 34989) and see what
-the response is when nothing is on that port.</p>
-<p>Now go try this for all ports from 1 to 65,535. Try searching what those port numbers correspond to, if
-anything. You can also use the <code class="docutils literal"><span class="pre">RETR</span></code> command to read anything the service outputs upon connecting into
-a file on the FTP server.</p>
+<p>Now you want to find out which services are running on the hosts we discovered. You can do this by trying
+each port from <code class="docutils literal"><span class="pre">1</span></code> to <code class="docutils literal"><span class="pre">65,535</span></code>.</p>
+<p>To keep things quick, only try privileged ports (those from <code class="docutils literal"><span class="pre">1</span></code> to <code class="docutils literal"><span class="pre">1023</span></code>).</p>
 <p>You should start to sense how you discover what is running, and get to look for options for attack.</p>
+<p>You may also be save the output from each service onto a file on the file on the FTP Server, using <code class="docutils literal"><span class="pre">RETR</span></code>.</p>
 </div>
-<div class="section" id="task-4-exfiltrate-data-from-a-private-ftp-server">
-<h2>3.5. Task 4: Exfiltrate data from a private FTP server<a class="headerlink" href="#task-4-exfiltrate-data-from-a-private-ftp-server" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="extension-task-exfiltrate-data-from-a-private-ftp-server">
+<h2>3.5. Extension Task: Exfiltrate data from a private FTP server<a class="headerlink" href="#extension-task-exfiltrate-data-from-a-private-ftp-server" title="Permalink to this headline">¶</a></h2>
 <p>For our next task we want to retrieve secret files from this network&#8217;s private FTP server. You may have
 noticed in Task 3 that there&#8217;s an FTP server running on port 21 of <code class="docutils literal"><span class="pre">192.168.56.102</span></code>. If you try
 <code class="docutils literal"><span class="pre">nc</span> <span class="pre">192.168.56.102</span> <span class="pre">21</span></code> you&#8217;ll find you can&#8217;t connect from your own computer. But you&#8217;ve found that
@@ -141,7 +209,10 @@ noticed in Task 3 that there&#8217;s an FTP server running on port 21 of <code c
 <p>Here&#8217;s the trick: you can send the contents of a file to the FTP server on port 21 of <code class="docutils literal"><span class="pre">192.168.56.102</span></code> and
 it&#8217;ll interpret each line of the contents as a command. So you can tell it to do things. Like send you their
 secret weapon blueprints.</p>
-<p><a class="reference external" href="conclusion.html">Conclusion →</a></p>
+<p>You could put a <code class="docutils literal"><span class="pre">PORT</span></code> command corresponding to a <code class="docutils literal"><span class="pre">new_data_address</span></code> into that file, then put <code class="docutils literal"><span class="pre">LIST</span></code>.
+Then the <code class="docutils literal"><span class="pre">192.168.56.102</span></code> FTP server will send your computer a list of files you can get with <code class="docutils literal"><span class="pre">ftp.recv_data()</span></code>.</p>
+<p>This is actually quite tricky to do with limited knowledge. But if you get it working, congratulations!</p>
+<p><a class="reference internal" href="conclusion.html#ref-conclusion"><span class="std std-ref">Conclusion</span></a></p>
 </div>
 </div>
 
@@ -154,11 +225,15 @@ secret weapon blueprints.</p>
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">3. Exercise 2: Scanning a Private Network</a><ul>
-<li><a class="reference internal" href="#design-of-the-ftp-protocol">3.1. Design of The FTP Protocol</a></li>
+<li><a class="reference internal" href="#design-of-the-ftp-protocol">3.1. Design of The FTP Protocol</a><ul>
+<li><a class="reference internal" href="#data-connections">3.1.1. Data Connections</a></li>
+<li><a class="reference internal" href="#ftp-bounce">3.1.2. FTP Bounce</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#task-1-experiment-with-ftp">3.2. Task 1: Experiment with FTP</a></li>
 <li><a class="reference internal" href="#task-2-discover-hosts-on-the-internal-network">3.3. Task 2: Discover hosts on the internal network</a></li>
 <li><a class="reference internal" href="#task-3-port-scan-discovered-hosts">3.4. Task 3: Port scan discovered hosts</a></li>
-<li><a class="reference internal" href="#task-4-exfiltrate-data-from-a-private-ftp-server">3.5. Task 4: Exfiltrate data from a private FTP server</a></li>
+<li><a class="reference internal" href="#extension-task-exfiltrate-data-from-a-private-ftp-server">3.5. Extension Task: Exfiltrate data from a private FTP server</a></li>
 </ul>
 </li>
 </ul>

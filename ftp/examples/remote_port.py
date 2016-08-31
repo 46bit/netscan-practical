@@ -5,7 +5,7 @@ from cp_ftp import FTP
 ftp = FTP("192.168.56.101", debug=True)
 ftp.send_login_commands("student", "golyeeHug6")
 
-target_address = ("192.168.56.102", 21)
+target_address = ("192.168.56.103", 21)
 ftp.send_port_command(target_address)
 response = ftp.recv_response()
 if response.code != 200:

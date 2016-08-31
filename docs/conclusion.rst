@@ -31,3 +31,5 @@ The key way to separate these things is Screened Subnets. This is where you have
 * Scanning the private network of the FTP server should have shown (at most) the other public webservers and nothing more important than that.
 
 The aim cannot be to keep attackers out of the entire network. Resourced attackers or those good at spearfishing will undoubtedly get inside your network. But you can try to separate different aspects of your network, to make an attacker's job much more difficult and give you a chance to spot them. Unlike a vulnerable FTP server sending someone on the Internet your secret blueprints.
+
+:ref:`ref_answers`

