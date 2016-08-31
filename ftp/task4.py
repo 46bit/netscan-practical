@@ -1,5 +1,4 @@
 import sys, os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 from cp_ftp import FTP
 
 ftp = FTP("192.168.56.101", debug=True)

