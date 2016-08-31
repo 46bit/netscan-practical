@@ -5,21 +5,30 @@ from cp_ftp import FTP
 # List of discovered host IP addresses.
 hosts = []
 
-for port in range(1, 65536):
+for last_octet in range(101, 132):
   # Make a new FTP connection each time for simplicity.
   ftp = FTP("192.168.56.101", debug=False)
   ftp.send_login_commands("student", "golyeeHug6")
 
-  # Send a PORT command pointing to target port on target host.
-  target_address = ("192.168.56.103", port)
+  host = "192.168.56.%d" % last_octet
+  target_address = (host, 22)
+
+  ################################################################################
+  # STUDENT TODO 1: Send a PORT command for target_address. Then send data to it.
+  # Hint: the provided examples/remote_port.py will be useful.
+  # Important: if a port is open then run:
+  #   hosts_ports[host].append(port)
+  ################################################################################
+
+  # Send a PORT command pointing to port 22 on this target.
   ftp.send_port_command(target_address)
-  # If the PORT command was somehow invalid, skip this host.
+  # If the PORT command was somehow invalid, skip this target.
   response = ftp.recv_response()
   if response.code != 200:
     print(response)
     continue
 
-  # Try sending file LIST output to target on chosen port.
+  # Try sending file LIST output to target on port 22.
   ftp.send_command("LIST")
   response = ftp.recv_response()
   print(target_address, response)

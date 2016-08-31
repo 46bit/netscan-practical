@@ -90,13 +90,24 @@ class FTP:
 
     return resp
 
+  def get_login_commands(self, user, password=''):
+    commands = []
+    commands.append("USER %s" % user)
+    if password:
+      commands.append("PASS %s" % password)
+    return CRLF.join(commands)
+
   def send_port_command(self, address):
+    command = self.get_port_command(address)
+    self.send_command(command)
+
+  def get_port_command(self, address):
     address_bytes = address[0].split(".")
     port_bytes = [repr(address[1] // 256), repr(address[1] % 256)]
     bytes = address_bytes + port_bytes
-    self.send_command("PORT %s" % ",".join(bytes))
+    return "PORT %s" % ",".join(bytes)
 
-  def new_data_address(self):
+  def new_data_address(self, port=0):
     if self.data_sock:
       data_sock = self.data_sock
       self.data_sock = None
@@ -105,7 +116,7 @@ class FTP:
 
     self.data_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     self.data_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    self.data_sock.bind((self.sock.getsockname()[0], 0))
+    self.data_sock.bind((self.sock.getsockname()[0], port))
     self.data_address = self.data_sock.getsockname()
     self.data_sock.listen(1)
     return self.data_address
