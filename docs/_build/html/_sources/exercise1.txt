@@ -1,7 +1,7 @@
 .. _ref_exercise1:
 
 ============================================================
-Exercise 1: Scanning servers
+Exercise 1: Scanning a Public Server
 ============================================================
 
 The internet is a public network. Billions of computers are connected in one form or another. We can try

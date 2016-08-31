@@ -47,28 +47,15 @@
             
   <div class="section" id="cyber-practicals-netscan">
 <h1>Cyber-Practicals: netscan<a class="headerlink" href="#cyber-practicals-netscan" title="Permalink to this headline">¶</a></h1>
-<p>Sensitive data are usually protected by access controls which allow
-subjects (users, programs) specific types of access (e.g. read, write,
-modify) to constrain the viewing or extraction of information
-(confidentiality), or the ways in which it may be changed
-(Integrity), or both.</p>
-<p>Internet Users are familiar with how browsing behaviour is
-tracked and consolidated to provide a profile of &#8216;interests&#8217;
-which are then used to provide targeted advertising. This
-&#8216;linkage&#8217; of information may be helpful (if you enjoy
-advertising!) or regarded as a violation of privacy.</p>
-<p>The problem of inferring sensitive information from data
-fragments or statistics which are otherwise not sensitive is a
-common concern of database designers. For example, queries
-against public census information or customer databases that
-provide aggregated statistics may be contrived to intersect in
-such a way that they reveal information about single identities
-in the system.</p>
-<p>dbinfer is a progam which supports inference experiments by
-providing access to a small database of &#8216;Students and Exam
-Grades&#8217;. Program features include command-line and API
-interfaces, statistical queries, and pre and post query
-inference management policies.</p>
+<p>Network Scanning is the task of finding running services and hosts on a network.
+In casual parlance, &#8220;what computers are connected to this router and what do they
+seem to do?&#8221;</p>
+<p>Attackers commonly perform it to understand private networks they have intruded onto.
+Network Engineers also use it, to understand their own networks and fix problems before
+Attackers can use them.</p>
+<p>This practical teaches how to perform network scanning with commonly-used tools, how
+to abuse services to act as private network scanners, and the mindsets to build
+defendable services and networks.</p>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
@@ -78,7 +65,7 @@ inference management policies.</p>
 <li class="toctree-l2"><a class="reference internal" href="introduction.html#network-scanning">1.3. Network Scanning</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="exercise1.html">2. Exercise 1: Scanning servers</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="exercise1.html">2. Exercise 1: Scanning a Public Server</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="exercise1.html#task-1-manually-with-netcat">2.1. Task 1: Manually with netcat</a></li>
 <li class="toctree-l2"><a class="reference internal" href="exercise1.html#task-2-automated-port-scanning-with-nmap">2.2. Task 2: Automated port scanning with <code class="docutils literal"><span class="pre">nmap</span></code></a></li>
 </ul>

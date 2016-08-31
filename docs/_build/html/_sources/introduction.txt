@@ -79,3 +79,5 @@ then you have to try and manage the risks. If it's only for people inside your c
 connections to the local network - but this can be worked around by an attacker, as we'll explore later.
 
 **You need to firewall the things you don't want people connecting to (like a terrible chess program you wrote last week) and expose things that people need to use (like a webserver).**
+
+Let's start performing network scanning: :ref:`ref_exercise1`
