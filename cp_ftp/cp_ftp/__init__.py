@@ -1,1 +1,1 @@
-from cp_ftp.FTP import *
+from cp_ftp.ftp import *
