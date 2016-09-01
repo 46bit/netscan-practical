@@ -154,22 +154,23 @@ every host ``192.168.0.1`` through ``192.168.0.255``, but that's ``255 * 65,536 
 To keep things quick, just check port ``22`` on each of those IP Addresses. To make things quicker, only scan
 from ``192.168.0.101`` to ``192.168.0.132``.
 
-Make a list of which IP Addresses connect successfully.
+**Open ftp/task2.py in an editor to get started.** There are instructions inside. You can run that script
+with ``python3 ftp/task2.py``. :ref:`ref_ftp_reference` may be useful.
 
 Hint: You can see the difference between successful/unsuccessful under :ref:`ref_exercise2_ftp_bounce`. See whether code 150 was recieved.
-
-Hint: use a new ``FTP`` instance each time, and loop over each IP Address.
 
 ------------------------------------------------------------
 Task 3: Port scan discovered hosts
 ------------------------------------------------------------
 
 Now you want to find out which services are running on the hosts we discovered. You can do this by trying
-each port from ``1`` to ``65,535``.
-
-To keep things quick, only try privileged ports (those from ``1`` to ``1023``).
+each port from ``1`` to ``65,535``. To keep things quick, only try privileged ports (those from ``1`` to
+``1023``).
 
 You should start to sense how you discover what is running, and get to look for options for attack.
+
+**Open ftp/task3.py in an editor to get started.** There are instructions inside. You can run that script
+with ``python3 ftp/task3.py``. :ref:`ref_ftp_reference` may be useful.
 
 You may also be save the output from each service onto a file on the file on the FTP Server, using ``RETR``.
 
@@ -187,8 +188,12 @@ it'll interpret each line of the contents as a command. So you can tell it to do
 secret weapon blueprints.
 
 You could put a ``PORT`` command corresponding to a ``new_data_address`` into that file, then put ``LIST``.
-Then the ``192.168.56.102`` FTP server will send your computer a list of files you can get with ``ftp.recv_data()``.
+Then the ``192.168.56.102`` FTP server will send your computer a list of files you can get with ``ftp.recv_data()``. This is quite tricky to do with limited knowledge. As such I've written these
+attack commands for you. All you need to do is get it sent to port 21 on the ``192.168.56.103``.
 
-This is actually quite tricky to do with limited knowledge. But if you get it working, congratulations!
+**Open ftp/task4.py in an editor to get started.** There are instructions inside. You can run that script
+with ``python3 ftp/task4.py``. :ref:`ref_ftp_reference` may be useful.
 
-:ref:`ref_conclusion`
+------------
+
+**Continue:** :ref:`ref_conclusion`

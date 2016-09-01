@@ -4,10 +4,19 @@
 Introduction
 ============================================================
 
-This exercise is going to give a basic introduction to Network Security. You'll build a port scanner that
-gets inside private networks using an FTP vulnerability, use the scanner to identify services running on a
-server, destroy servers running private shells and finally retrieve the contents of all private FTP servers.
-At each stage we'll also look at the means and mindset to defend against these problems.
+This exercise is going to give a basic introduction to Network Security.
+
+Network Scanning is the task of finding running services and hosts on a network.
+In casual parlance, "what computers are connected to this router and what do they
+seem to do?"
+
+Attackers commonly perform it to understand private networks they have intruded onto.
+Network Engineers also use it, to understand their own networks and fix problems before
+Attackers can use them.
+
+This practical teaches how to perform network scanning with commonly-used tools, how
+to abuse services to act as private network scanners, and the mindsets to build
+defendable services and networks.
 
 To begin with here's a *basic* refresher on TCP networking.
 
@@ -80,4 +89,6 @@ connections to the local network - but this can be worked around by an attacker,
 
 **You need to firewall the things you don't want people connecting to (like a terrible chess program you wrote last week) and expose things that people need to use (like a webserver).**
 
-Let's start performing network scanning: :ref:`ref_exercise1`
+------------
+
+**Let's start performing network scanning:** :ref:`ref_exercise1`

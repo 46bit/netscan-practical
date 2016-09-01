@@ -15,8 +15,8 @@ The approach must be to assume attackers will get onto your network and plan how
 Learning from this Exercise
 ------------------------------------------------------------
 
-A public FTP server is a little less common these days, but there might be a role for it. But you could have
-prevented the issue by:
+Public FTP servers are less common now than they once were, especially inside companies. Many alternatives
+exist, with better security properties. However the issues you've exploited could be prevented now by:
 
 * Keeping FTP up-to-date with security patches.
 * Automated vulnerability scanning.
@@ -26,10 +26,26 @@ You want to make clear divides in your network. Your webservers need read access
 
 Think of the, "employees do not have access to the vault," signs banks have? The employees don't have keys to open the vault because anyone could walk in with a shotgun, or get a lightly-vetted job there and steal the contents one afternoon. Similarly you don't want someone to steal an employee's laptop at a conference and then download all your corporate blueprints.
 
+------------------------------------------------------------
+Screened Subnets
+------------------------------------------------------------
+
 The key way to separate these things is Screened Subnets. This is where you have a different IP ranges for the webservers to the Human Resources PCs to the corporate file stores, and any communication between them is subject to strict rules. This is the network example of having a one-way hatch for depositing money down a chute.
 
 * Scanning the private network of the FTP server should have shown (at most) the other public webservers and nothing more important than that.
 
 The aim cannot be to keep attackers out of the entire network. Resourced attackers or those good at spearfishing will undoubtedly get inside your network. But you can try to separate different aspects of your network, to make an attacker's job much more difficult and give you a chance to spot them. Unlike a vulnerable FTP server sending someone on the Internet your secret blueprints.
 
-:ref:`ref_answers`
+------------------------------------------------------------
+Your responsibility as a Programmer
+------------------------------------------------------------
+
+This exercise didn't intend to make you into a Network Engineer. That's a deep speciality. But awareness of
+how attackers can abuse quirks and vulnerabilities is essential to building good, secure systems.
+
+When your Operations team put blockers in your way as a developer, that's often because those things making
+your life more difficult are intended to make an attacker's life even more difficult.
+
+------------
+
+**Get answers:** :ref:`ref_answers`

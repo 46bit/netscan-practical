@@ -58,4 +58,6 @@ of options to throttle it and for different sorts of scanning. We're going to us
 Port 80 (HTTP) and 443 (HTTPS) are a webserver. Port 22 is SSH, used for logging into a shell remotely.
 But Port 21 is FTP, which is used for sharing files.
 
-In the next exercise we'll learn how services can be used to access private networks! :ref:`ref_exercise2`
+------------
+
+**In the next exercise we'll learn how services can be used to access private networks!** :ref:`ref_exercise2`

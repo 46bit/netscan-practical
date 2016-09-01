@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="netscan 0.1.0 documentation" href="index.html" />
     <link rel="next" title="4. FTP Protocol Reference" href="ftp-reference.html" />
-    <link rel="prev" title="2. Exercise 1: Scanning servers" href="exercise1.html" /> 
+    <link rel="prev" title="2. Exercise 1: Scanning a Public Server" href="exercise1.html" /> 
   </head>
   <body role="document">
     <div class="related" role="navigation" aria-label="related navigation">
@@ -38,7 +38,7 @@
           <a href="ftp-reference.html" title="4. FTP Protocol Reference"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="exercise1.html" title="2. Exercise 1: Scanning servers"
+          <a href="exercise1.html" title="2. Exercise 1: Scanning a Public Server"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">netscan 0.1.0 documentation</a> &raquo;</li> 
       </ul>
@@ -188,16 +188,18 @@ work.</p>
 every host <code class="docutils literal"><span class="pre">192.168.0.1</span></code> through <code class="docutils literal"><span class="pre">192.168.0.255</span></code>, but that&#8217;s <code class="docutils literal"><span class="pre">255</span> <span class="pre">*</span> <span class="pre">65,536</span> <span class="pre">=</span> <span class="pre">16,711,680</span></code> attempts.</p>
 <p>To keep things quick, just check port <code class="docutils literal"><span class="pre">22</span></code> on each of those IP Addresses. To make things quicker, only scan
 from <code class="docutils literal"><span class="pre">192.168.0.101</span></code> to <code class="docutils literal"><span class="pre">192.168.0.132</span></code>.</p>
-<p>Make a list of which IP Addresses connect successfully.</p>
+<p><strong>Open ftp/task2.py in an editor to get started.</strong> There are instructions inside. You can run that script
+with <code class="docutils literal"><span class="pre">python3</span> <span class="pre">ftp/task2.py</span></code>. <a class="reference internal" href="ftp-reference.html#ref-ftp-reference"><span class="std std-ref">FTP Protocol Reference</span></a> may be useful.</p>
 <p>Hint: You can see the difference between successful/unsuccessful under <a class="reference internal" href="#ref-exercise2-ftp-bounce"><span class="std std-ref">FTP Bounce</span></a>. See whether code 150 was recieved.</p>
-<p>Hint: use a new <code class="docutils literal"><span class="pre">FTP</span></code> instance each time, and loop over each IP Address.</p>
 </div>
 <div class="section" id="task-3-port-scan-discovered-hosts">
 <h2>3.4. Task 3: Port scan discovered hosts<a class="headerlink" href="#task-3-port-scan-discovered-hosts" title="Permalink to this headline">¶</a></h2>
 <p>Now you want to find out which services are running on the hosts we discovered. You can do this by trying
-each port from <code class="docutils literal"><span class="pre">1</span></code> to <code class="docutils literal"><span class="pre">65,535</span></code>.</p>
-<p>To keep things quick, only try privileged ports (those from <code class="docutils literal"><span class="pre">1</span></code> to <code class="docutils literal"><span class="pre">1023</span></code>).</p>
+each port from <code class="docutils literal"><span class="pre">1</span></code> to <code class="docutils literal"><span class="pre">65,535</span></code>. To keep things quick, only try privileged ports (those from <code class="docutils literal"><span class="pre">1</span></code> to
+<code class="docutils literal"><span class="pre">1023</span></code>).</p>
 <p>You should start to sense how you discover what is running, and get to look for options for attack.</p>
+<p><strong>Open ftp/task3.py in an editor to get started.</strong> There are instructions inside. You can run that script
+with <code class="docutils literal"><span class="pre">python3</span> <span class="pre">ftp/task3.py</span></code>. <a class="reference internal" href="ftp-reference.html#ref-ftp-reference"><span class="std std-ref">FTP Protocol Reference</span></a> may be useful.</p>
 <p>You may also be save the output from each service onto a file on the file on the FTP Server, using <code class="docutils literal"><span class="pre">RETR</span></code>.</p>
 </div>
 <div class="section" id="extension-task-exfiltrate-data-from-a-private-ftp-server">
@@ -210,9 +212,12 @@ noticed in Task 3 that there&#8217;s an FTP server running on port 21 of <code c
 it&#8217;ll interpret each line of the contents as a command. So you can tell it to do things. Like send you their
 secret weapon blueprints.</p>
 <p>You could put a <code class="docutils literal"><span class="pre">PORT</span></code> command corresponding to a <code class="docutils literal"><span class="pre">new_data_address</span></code> into that file, then put <code class="docutils literal"><span class="pre">LIST</span></code>.
-Then the <code class="docutils literal"><span class="pre">192.168.56.102</span></code> FTP server will send your computer a list of files you can get with <code class="docutils literal"><span class="pre">ftp.recv_data()</span></code>.</p>
-<p>This is actually quite tricky to do with limited knowledge. But if you get it working, congratulations!</p>
-<p><a class="reference internal" href="conclusion.html#ref-conclusion"><span class="std std-ref">Conclusion</span></a></p>
+Then the <code class="docutils literal"><span class="pre">192.168.56.102</span></code> FTP server will send your computer a list of files you can get with <code class="docutils literal"><span class="pre">ftp.recv_data()</span></code>. This is quite tricky to do with limited knowledge. As such I&#8217;ve written these
+attack commands for you. All you need to do is get it sent to port 21 on the <code class="docutils literal"><span class="pre">192.168.56.103</span></code>.</p>
+<p><strong>Open ftp/task4.py in an editor to get started.</strong> There are instructions inside. You can run that script
+with <code class="docutils literal"><span class="pre">python3</span> <span class="pre">ftp/task4.py</span></code>. <a class="reference internal" href="ftp-reference.html#ref-ftp-reference"><span class="std std-ref">FTP Protocol Reference</span></a> may be useful.</p>
+<hr class="docutils" />
+<p><strong>Continue:</strong> <a class="reference internal" href="conclusion.html#ref-conclusion"><span class="std std-ref">Conclusion</span></a></p>
 </div>
 </div>
 
@@ -240,7 +245,7 @@ Then the <code class="docutils literal"><span class="pre">192.168.56.102</span><
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="exercise1.html"
-                        title="previous chapter">2. Exercise 1: Scanning servers</a></p>
+                        title="previous chapter">2. Exercise 1: Scanning a Public Server</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="ftp-reference.html"
                         title="next chapter">4. FTP Protocol Reference</a></p>
@@ -275,7 +280,7 @@ Then the <code class="docutils literal"><span class="pre">192.168.56.102</span><
           <a href="ftp-reference.html" title="4. FTP Protocol Reference"
              >next</a> |</li>
         <li class="right" >
-          <a href="exercise1.html" title="2. Exercise 1: Scanning servers"
+          <a href="exercise1.html" title="2. Exercise 1: Scanning a Public Server"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">netscan 0.1.0 documentation</a> &raquo;</li> 
       </ul>
