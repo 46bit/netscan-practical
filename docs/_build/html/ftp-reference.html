@@ -141,13 +141,13 @@ connection. Once all the data is sent the server will close the connection and s
 <td><code class="docutils literal"><span class="pre">PORT</span> <span class="pre">192,168,56,1,43,232</span></code></td>
 </tr>
 <tr class="row-even"><td>Server:</td>
-<td>200 PORT command successful</td>
+<td><code class="docutils literal"><span class="pre">200</span> <span class="pre">PORT</span> <span class="pre">command</span> <span class="pre">successful</span></code></td>
 </tr>
 <tr class="row-odd"><td>Client:</td>
 <td><code class="docutils literal"><span class="pre">LIST</span></code></td>
 </tr>
 <tr class="row-even"><td>Server:</td>
-<td>(<em>opens a TCP connection to 192.168.56.1:11240</em>)``</td>
+<td>(<em>opens a TCP connection to 192.168.56.1:11240</em>)</td>
 </tr>
 <tr class="row-odd"><td>Server:</td>
 <td><code class="docutils literal"><span class="pre">150</span> <span class="pre">Opening</span> <span class="pre">ASCII</span> <span class="pre">mode</span> <span class="pre">data</span> <span class="pre">connection</span> <span class="pre">for</span> <span class="pre">file</span> <span class="pre">list</span></code></td>
@@ -167,8 +167,47 @@ connection. Once all the data is sent the server will close the connection and s
 </tbody>
 </table>
 </div>
+<div class="section" id="what-happens-if-the-data-connection-fails">
+<h2>4.4. What happens if the Data Connection fails?<a class="headerlink" href="#what-happens-if-the-data-connection-fails" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">200</span> <span class="pre">PORT</span> <span class="pre">command</span> <span class="pre">successful</span></code> only means the <code class="docutils literal"><span class="pre">PORT</span></code> command was valid. The Server doesn&#8217;t try to
+connect until you ask it to send some data.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&nbsp;</th>
+<th class="head">Command Messages or (<em>activity in italics</em>)</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Client:</td>
+<td>(<em>doesn&#8217;t listen on port 11240</em>)</td>
+</tr>
+<tr class="row-odd"><td>Client:</td>
+<td><code class="docutils literal"><span class="pre">PORT</span> <span class="pre">192,168,56,1,43,232</span></code></td>
+</tr>
+<tr class="row-even"><td>Server:</td>
+<td><code class="docutils literal"><span class="pre">200</span> <span class="pre">PORT</span> <span class="pre">command</span> <span class="pre">successful</span></code></td>
+</tr>
+<tr class="row-odd"><td>Client:</td>
+<td><code class="docutils literal"><span class="pre">LIST</span></code></td>
+</tr>
+<tr class="row-even"><td>Server:</td>
+<td>(<em>fails opening a TCP connection to 192.168.56.1:11240</em>)</td>
+</tr>
+<tr class="row-odd"><td>Server:</td>
+<td><code class="docutils literal"><span class="pre">425</span> <span class="pre">Unable</span> <span class="pre">to</span> <span class="pre">build</span> <span class="pre">data</span> <span class="pre">connection:</span> <span class="pre">Connection</span> <span class="pre">refused</span></code></td>
+</tr>
+<tr class="row-even"><td>Server:</td>
+<td><code class="docutils literal"><span class="pre">450</span> <span class="pre">LIST:</span> <span class="pre">Connection</span> <span class="pre">refused</span></code></td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="section" id="a-short-incomplete-but-useful-command-reference">
-<h2>4.4. A Short, Incomplete but Useful Command Reference<a class="headerlink" href="#a-short-incomplete-but-useful-command-reference" title="Permalink to this headline">¶</a></h2>
+<h2>4.5. A Short, Incomplete but Useful Command Reference<a class="headerlink" href="#a-short-incomplete-but-useful-command-reference" title="Permalink to this headline">¶</a></h2>
 <table border="1" class="docutils">
 <colgroup>
 <col width="23%" />
@@ -222,7 +261,8 @@ connection. Once all the data is sent the server will close the connection and s
 <li><a class="reference internal" href="#what-is-ftp">4.1. What is FTP?</a></li>
 <li><a class="reference internal" href="#authentication">4.2. Authentication</a></li>
 <li><a class="reference internal" href="#using-the-data-connection">4.3. Using the Data Connection</a></li>
-<li><a class="reference internal" href="#a-short-incomplete-but-useful-command-reference">4.4. A Short, Incomplete but Useful Command Reference</a></li>
+<li><a class="reference internal" href="#what-happens-if-the-data-connection-fails">4.4. What happens if the Data Connection fails?</a></li>
+<li><a class="reference internal" href="#a-short-incomplete-but-useful-command-reference">4.5. A Short, Incomplete but Useful Command Reference</a></li>
 </ul>
 </li>
 </ul>

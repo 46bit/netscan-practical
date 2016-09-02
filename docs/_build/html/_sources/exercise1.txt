@@ -26,7 +26,7 @@ We can use netcat to open a connection to a chosen IP address and port, then see
 
     # Connect over TCP to 192.168.56.101 port 22 (notated as 192.168.56.101:22).
     # netcat is often called nc
-    $ nc 192.168.56.103 22
+    $ nc 192.168.56.101 22
     SSH-2.0-OpenSSH_6.7p1 Debian-5+deb8u2
 
     # You'll want to Ctrl+C to exit now

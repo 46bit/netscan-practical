@@ -104,7 +104,7 @@ operations, as explained in :ref:`ref_ftp_reference`
 
 4. Try deleting a file::
 
-    python3 examples/retr.py
+    python3 examples/dele.py
 
 5. Try sending data to a another service::
 
@@ -112,7 +112,7 @@ operations, as explained in :ref:`ref_ftp_reference`
 
 You'll notice these examples all print the commands moving back and forth. This is controlled by a
 ``debug=True`` parameter you can see if you open up the files. Play about and get familiar with how things
-work.
+work. :ref:`ref_ftp_reference` will help.
 
 ------------------------------------------------------------
 Task 2: Discover hosts on the internal network
@@ -157,7 +157,7 @@ from ``192.168.0.101`` to ``192.168.0.132``.
 **Open ftp/task2.py in an editor to get started.** There are instructions inside. You can run that script
 with ``python3 ftp/task2.py``. :ref:`ref_ftp_reference` may be useful.
 
-Hint: You can see the difference between successful/unsuccessful under :ref:`ref_exercise2_ftp_bounce`. See whether code 150 was recieved.
+Hint: You can see the difference between successful/unsuccessful under :ref:`ref_exercise2_ftp_bounce`.
 
 ------------------------------------------------------------
 Task 3: Port scan discovered hosts
@@ -179,17 +179,17 @@ Extension Task: Exfiltrate data from a private FTP server
 ------------------------------------------------------------
 
 For our next task we want to retrieve secret files from this network's private FTP server. You may have
-noticed in Task 3 that there's an FTP server running on port 21 of ``192.168.56.102``. If you try
-``nc 192.168.56.102 21`` you'll find you can't connect from your own computer. But you've found that
+noticed in Task 3 that there's an FTP server running on port 21 of ``192.168.56.103``. If you try
+``nc 192.168.56.103 21`` you'll find you can't connect from your own computer. But you've found that
 ``192.168.56.101`` can.
 
-Here's the trick: you can send the contents of a file to the FTP server on port 21 of ``192.168.56.102`` and
+Here's the trick: you can send the contents of a file to the FTP server on port 21 of ``192.168.56.103`` and
 it'll interpret each line of the contents as a command. So you can tell it to do things. Like send you their
 secret weapon blueprints.
 
 You could put a ``PORT`` command corresponding to a ``new_data_address`` into that file, then put ``LIST``.
-Then the ``192.168.56.102`` FTP server will send your computer a list of files you can get with ``ftp.recv_data()``. This is quite tricky to do with limited knowledge. As such I've written these
-attack commands for you. All you need to do is get it sent to port 21 on the ``192.168.56.103``.
+Then the ``192.168.56.103`` FTP server will send your computer a list of files you can get with ``ftp.recv_data()``. This is quite tricky to do with limited knowledge. As such I've written these
+attack commands for you. All you need to do is get it sent to port 21 on ``192.168.56.103``.
 
 **Open ftp/task4.py in an editor to get started.** There are instructions inside. You can run that script
 with ``python3 ftp/task4.py``. :ref:`ref_ftp_reference` may be useful.
