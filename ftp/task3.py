@@ -1,8 +1,12 @@
 import sys, os
 from cp_ftp import FTP
 
-# List of discovered host IP addresses.
-hosts = ["192.168.56.102", "192.168.56.103"]
+################################################################################
+# STUDENT TODO 1: List of discovered host IP addresses.
+# Change this array to the hosts output by `task2.py`.
+################################################################################
+hosts = []
+
 hosts_ports = {}
 
 for host in hosts:
@@ -10,7 +14,7 @@ for host in hosts:
 
   for port in range(1, 1024):
     # Make a new FTP connection each time for simplicity.
-    ftp = FTP("192.168.56.101", debug=False)
+    ftp = FTP("192.168.56.101", debug=True)
     ftp.send_login_commands("student", "golyeeHug6")
 
     target_address = (host, port)
@@ -25,4 +29,4 @@ for host in hosts:
     ftp.close()
 
 for host in hosts:
-  print("%s has ports %s open." % (host, ", ".join(map(str, hosts_ports[host]))))
+  print("%s has ports (%s) open." % (host, ", ".join(map(str, hosts_ports[host]))))

