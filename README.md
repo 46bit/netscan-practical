@@ -18,16 +18,16 @@ The most self-contained way to achieve this would be having a few linux containe
 ## Setup on the CyberPracticals VM
 
 ### Python Package Installation
+
 ```
 pip3 install cp_ftp/
 ```
 
-### Run the documentation server
-```
-./run.sh
-```
+### Documentation
 
-Leave this running in the background. `CTRL+C` will kill it and all the child processes when you're done.
+The built documentation is in `docs/_build/html`. If you've changed the IP addresses, make sure to update
+them as detailed above and rebuild the documentation.
 
-## Get started
-Go to [The Documentation](http://localhost:3000).
+## Authorship
+
+Built in August 2016 by [Michael Mokrysz](https://46b.it).
