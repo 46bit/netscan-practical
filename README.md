@@ -1,5 +1,7 @@
 # Network Scanning Practical: Setup
 
+A practical to teach about Network Scanning attacks and defences. Part of the Cyber Security Practicals.
+
 ## Requirements for this CyberPractical
 
 * Requires `nmap` and `nc` (netcat) to be accessible to students.
